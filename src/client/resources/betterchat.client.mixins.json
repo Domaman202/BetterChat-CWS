@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "ru.cws.betterchat.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ChatHudMixin",
+    "ChatScreenMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "MessageHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}

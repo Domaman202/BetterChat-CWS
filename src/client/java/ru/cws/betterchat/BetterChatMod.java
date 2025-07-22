@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.cws.betterchat.category.AllChatCategory;
 import ru.cws.betterchat.category.ChatCategory;
+import ru.cws.betterchat.category.CommonChatCategory;
 import ru.cws.betterchat.util.ConfigHelper;
 import ru.cws.betterchat.util.IChatScreen;
 
@@ -23,21 +24,19 @@ import java.util.List;
 public class BetterChatMod implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(BetterChatMod.class);
     public static final String CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "betterchat/config.json").getAbsolutePath();
+    public static final String DEFAULT_CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "betterchat/default.json").getAbsolutePath();
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static List<ChatCategory> CATEGORIES = new ArrayList<>();
     public static ChatCategory SELECTED_CATEGORY;
     public static IChatScreen CHAT_SCREEN = null;
-    public static boolean GLOBAL_CHAT = true;
+    public static boolean ALL_CHAT_DEFAULT = true;
     public static boolean NO_THROW = true;
     public static boolean NO_FLEX = false;
     public static boolean AUTOSAVE = true;
 
     @Override
     public void onInitializeClient() {
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            GLOBAL_CHAT = true;
-            tryCommand(client, "gc");
-        });
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> tryCommand("gc"));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             for (ChatCategory category : CATEGORIES) {
                 category.messages.clear();
@@ -48,10 +47,11 @@ public class BetterChatMod implements ClientModInitializer {
             load(CONFIG_FILE);
         } else {
             CATEGORIES.add(new AllChatCategory());
-            CATEGORIES.add(new ChatCategory("Общий", "Общий игровой чат", "common", null, null, true));
-            CATEGORIES.add(new ChatCategory("Рынок", "Торговый игровой чат", "trade", null, null, true));
-            CATEGORIES.add(new ChatCategory("Поддержка", "Чат технической поддержки", "support", null, null, false));
+            CATEGORIES.add(new CommonChatCategory());
+            CATEGORIES.add(new ChatCategory("Клан", "Клановый игровой чат", null, "[clan]", "^\\[clan\\]", true, true));
+            CATEGORIES.add(new ChatCategory("Поддержка", "Чат технической поддержки", null, "[support]", "^\\[support\\]", true, false));
             save(CONFIG_FILE);
+            save(DEFAULT_CONFIG_FILE);
         }
     }
 
@@ -83,9 +83,9 @@ public class BetterChatMod implements ClientModInitializer {
         }
     }
 
-    public static void tryCommand(MinecraftClient client, String command) {
+    public static void tryCommand(String command) {
         try {
-            client.player.networkHandler.sendChatCommand(command);
+            MinecraftClient.getInstance().player.networkHandler.sendChatCommand(command);
         } catch (Exception ignored) {
         }
     }

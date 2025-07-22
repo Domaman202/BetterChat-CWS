@@ -15,6 +15,8 @@ public class CategoryWidget extends ChatWidget {
     public CategoryWidget(ChatCategory category) {
         super(0, 0, category.name.length() * 10, 20, Text.of(category.name), Text.of(category.description));
         this.category = category;
+        this.flexRender.setBaseColor(0x60606060);
+        this.flexRender.setHoverColor(0x806060F0);
     }
 
     public void updateActive() {
@@ -26,9 +28,9 @@ public class CategoryWidget extends ChatWidget {
         BetterChatMod.SELECTED_CATEGORY = this.category;
         this.category.onOpen();
         this.active = false;
-        for (CategoryWidget tab : BetterChatMod.CHAT_SCREEN.BetterChat$tabs()) {
+        for (CategoryWidget tab : BetterChatMod.CHAT_SCREEN.BetterChat$tabs())
             tab.updateActive();
-        }
+        BetterChatMod.CHAT_SCREEN.BetterChat$globalLocalWidget().update();
     }
 
     @Override

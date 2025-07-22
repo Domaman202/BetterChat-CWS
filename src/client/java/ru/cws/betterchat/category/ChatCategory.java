@@ -9,36 +9,41 @@ import org.jetbrains.annotations.Nullable;
 import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.util.IChatHud;
 
-import java.util.Objects;
+import java.lang.reflect.Array;
 import java.util.regex.Pattern;
 
 public class ChatCategory {
     public String name;
     public String description;
-    public String category;
+    //
     public String command;
     public String prefix;
-    public boolean gl;
+    public String pattern;
+    public boolean replacePattern;
+    public boolean showInCommon;
     //
+    public int cachedHash;
+    public Pattern cachedPattern;
     public ArrayListDeque<Text> messages;
-    public int cacheHash = 0;
-    public Pattern cachePattern = null;
 
-    public ChatCategory(String name, String description, String category, String command, String prefix, boolean gl) {
+    public ChatCategory(String name, String description, String command, String prefix, String pattern, boolean replacePattern, boolean showInCommon) {
         this.name = name;
         this.description = description;
-        this.category = category;
         this.command = command;
         this.prefix = prefix;
-        this.gl = gl;
+        this.pattern = pattern;
+        this.replacePattern = replacePattern;
+        this.showInCommon = showInCommon;
+        this.cachedHash = 0;
+        this.cachedPattern = null;
         this.messages = new ArrayListDeque<>(100);
-        this.cacheHash = 0;
-        this.cachePattern = null;
     }
 
     public void onOpen() {
         this.refreshMessages();
-        BetterChatMod.tryCommand(MinecraftClient.getInstance(), Objects.requireNonNullElseGet(this.command, () -> !this.gl || BetterChatMod.GLOBAL_CHAT ? "gc" : "lc"));
+        if (this.command != null) {
+            BetterChatMod.tryCommand(command);
+        }
     }
 
     public void refreshMessages() {
@@ -46,32 +51,20 @@ public class ChatCategory {
     }
 
     public String formatToSend(String message) {
-        var msg = message;
-        if (this.prefix != null)
-            msg = this.prefix + msg;
-        if (this.category != null)
-            msg = "[" + this.category + "] " + msg;
-        return msg;
+        return this.prefix == null ? message : this.prefix + message;
     }
 
     public void tryAccept(Text message) {
-        var msg = checkReplaceAccepting(message, this.getPattern());
+        var msg = checkReplaceAccepting(message, this.pattern(), this.replacePattern ? "" : null);
         if (msg != null) {
             this.accept(msg);
         }
     }
 
-    public Pattern getPattern() {
-        if (this.hashCode() != this.cacheHash) {
-            var pattern = new StringBuilder("\\s*");
-            if (this.prefix != null)
-                pattern.append(this.prefix).append("\\s*");
-            if (this.category != null)
-                pattern.append("\\[").append(this.category).append("\\]\\s*");
-            this.cachePattern = Pattern.compile(pattern.toString());
-            this.cacheHash = this.hashCode();
-        }
-        return this.cachePattern;
+    public Pattern pattern() {
+        if (this.pattern.hashCode() != this.cachedHash)
+            this.cachedPattern = Pattern.compile(this.pattern);
+        return this.cachedPattern;
     }
 
     public void accept(Text message) {
@@ -80,7 +73,7 @@ public class ChatCategory {
         this.messages.addFirst(message);
     }
 
-    protected static @Nullable Text checkReplaceAccepting(Text message, Pattern regex) {
+    protected static @Nullable Text checkReplaceAccepting(Text message, Pattern regex, @Nullable String replace) {
         var content = message.getContent();
         switch (content.getType().id()) {
             case "text" -> {
@@ -89,11 +82,11 @@ public class ChatCategory {
                     var sibling = message.getSiblings().getFirst();
                     if (sibling == null)
                         return null;
-                    return checkReplaceAccepting(sibling, regex);
+                    return checkReplaceAccepting(sibling, regex, replace);
                 }
                 var matcher = regex.matcher(text);
                 if (matcher.find()) {
-                    return Text.literal(matcher.replaceAll("")).setStyle(message.getStyle());
+                    return replace == null ? message : Text.literal(matcher.replaceAll(replace)).setStyle(message.getStyle());
                 }
             }
             case "translatable" -> {
@@ -103,14 +96,19 @@ public class ChatCategory {
                         var text = translatable.getArg(1).getString();
                         var matcher = regex.matcher(text);
                         if (matcher.find()) {
-                            translatable.getArgs()[1] = Text.literal(matcher.replaceAll("")).setStyle(((Text) translatable.getArgs()[1]).getStyle());
-                            return Text.translatable("chat.type.text", translatable.getArgs());
+                            if (replace == null)
+                                return message;
+                            var args = translatable.getArgs();
+                            var newArgs = (Object[]) Array.newInstance(args.getClass().componentType(), args.length);
+                            System.arraycopy(args, 0, newArgs, 0, args.length);
+                            newArgs[1] = Text.literal(matcher.replaceAll(replace)).setStyle(((Text) args[1]).getStyle());
+                            return Text.translatable("chat.type.text", newArgs);
                         }
                     }
                     case "command.unknown.command" -> {
                         var matcher = regex.matcher("Неизвестная команда");
                         if (matcher.find()) {
-                            return Text.literal(matcher.replaceAll("")).setStyle(message.getStyle());
+                            return replace == null ? message : Text.literal(matcher.replaceAll(replace)).setStyle(message.getStyle());
                         }
                     }
                     default -> {

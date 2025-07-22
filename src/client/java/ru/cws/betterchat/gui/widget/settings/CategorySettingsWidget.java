@@ -21,6 +21,8 @@ public class CategorySettingsWidget extends ChatWidget {
         this.category = category;
         this.screen = screen;
         this.selected = false;
+        this.flexRender.setBaseColor(0x60606060);
+        this.flexRender.setHoverColor(0x80808080);
     }
 
     @Override

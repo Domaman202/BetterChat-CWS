@@ -11,6 +11,8 @@ import ru.cws.betterchat.screen.ModSettingsScreen;
 public class LoadWidget extends ChatWidget {
     public LoadWidget(int i, int j) {
         super(i, j, 90, 20, Text.of("Загрузить"), Text.of("Загрузить конфигурацию из выбранного файла"));
+        this.flexRender.setBaseColor(0x60606010);
+        this.flexRender.setHoverColor(0x60FFFF10);
     }
 
     @Override

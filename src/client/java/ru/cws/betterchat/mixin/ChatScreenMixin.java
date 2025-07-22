@@ -26,12 +26,19 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen {
     @Shadow protected TextFieldWidget chatField;
     @Unique
     private List<CategoryWidget> BetterChat$tabs;
+    @Unique
+    private GlobalLocalWidget BetterCombat$globalLocalWidget;
 
     protected ChatScreenMixin(Text title) {super(title);}
 
     @Override
     public List<CategoryWidget> BetterChat$tabs() {
-        return BetterChat$tabs;
+        return this.BetterChat$tabs;
+    }
+
+    @Override
+    public GlobalLocalWidget BetterChat$globalLocalWidget() {
+        return this.BetterCombat$globalLocalWidget;
     }
 
     @Inject(method = "init", at = @At("TAIL"))
@@ -46,6 +53,7 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen {
         //
         var gl = new GlobalLocalWidget(offset, this.height - 24);
         this.addDrawableChild(gl);
+        this.BetterCombat$globalLocalWidget = gl;
         offset += gl.getWidth() + 1;
         //
         if (BetterChatMod.SELECTED_CATEGORY == null)

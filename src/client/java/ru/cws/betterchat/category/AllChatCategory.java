@@ -7,32 +7,37 @@ import org.jetbrains.annotations.Nullable;
 import ru.cws.betterchat.BetterChatMod;
 
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 public class AllChatCategory extends ChatCategory {
     public AllChatCategory() {
-        super("Все", "Все чаты", null, null, null, true);
+        super("Все", "Все чаты", null, null, null, false, false);
     }
 
     @Override
     public void tryAccept(Text message) {
+        if (BetterChatMod.ALL_CHAT_DEFAULT) {
+            this.accept(message);
+            return;
+        }
+
         var content = getAcceptingContent(message);
         if (content == null) {
             this.accept(message);
             return;
         }
+
         var nonFounded = true;
         for (var category : BetterChatMod.CATEGORIES) {
             if (category instanceof AllChatCategory)
                 continue;
-            var matcher = category.getPattern().matcher(content.content);
+            var matcher = category.pattern().matcher(content.content);
             if (matcher.find()) {
                 nonFounded = false;
                 var text = new StringBuilder();
                 text.append("§6~ Новое сообщение\n");
                 text.append("§3- Отправитель: §a").append(Objects.requireNonNullElse(content.sender, "Система")).append("\n");
                 text.append("§3- Категория:   §b ").append(category.name).append("\n");
-                text.append("§3- Содержание:  §c").append(matcher.replaceAll(""));
+                text.append("§3- Содержание:  §c").append(category.replacePattern ? matcher.replaceAll("") : content.content);
                 this.accept(Text.of(text.toString()));
             }
         }

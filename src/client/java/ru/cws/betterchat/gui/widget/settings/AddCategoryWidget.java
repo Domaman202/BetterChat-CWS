@@ -22,7 +22,7 @@ public class AddCategoryWidget extends ChatWidget {
 
     @Override
     public void onPress() {
-        var category = new ChatCategory("Новая категория", "Описание новой категории", null, null, null, true);
+        var category = new ChatCategory("Новая категория", "Описание новой категории", null, null, null, true, true);
         BetterChatMod.CATEGORIES.add(category);
         BetterChatMod.autosave();
         var tab = new CategorySettingsWidget(category, this.screen);

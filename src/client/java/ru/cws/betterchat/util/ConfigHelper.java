@@ -3,10 +3,12 @@ package ru.cws.betterchat.util;
 import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.category.AllChatCategory;
 import ru.cws.betterchat.category.ChatCategory;
+import ru.cws.betterchat.category.CommonChatCategory;
 
 import java.util.List;
 
 public record ConfigHelper(
+        boolean all_chat_default,
         boolean no_throw,
         boolean no_flex,
         boolean autosave,
@@ -14,6 +16,7 @@ public record ConfigHelper(
 )  {
     public static ConfigHelper fromMod() {
         return new ConfigHelper(
+                BetterChatMod.ALL_CHAT_DEFAULT,
                 BetterChatMod.NO_THROW,
                 BetterChatMod.NO_FLEX,
                 BetterChatMod.AUTOSAVE,
@@ -22,6 +25,7 @@ public record ConfigHelper(
     }
 
     public void toMod() {
+        BetterChatMod.ALL_CHAT_DEFAULT = this.all_chat_default;
         BetterChatMod.NO_THROW = this.no_throw;
         BetterChatMod.NO_FLEX = this.no_flex;
         BetterChatMod.AUTOSAVE = this.autosave;
@@ -33,34 +37,39 @@ public record ConfigHelper(
             String special,
             String name,
             String description,
-            String category,
             String command,
             String prefix,
-            boolean global_local
+            String pattern,
+            boolean pattern_replace,
+            boolean show_in_common
     ) {
         public static CategoryHelper fromCategory(ChatCategory category) {
             return new CategoryHelper(
-                    category instanceof AllChatCategory ? "all" : null,
+                    category instanceof AllChatCategory? "all" : category instanceof CommonChatCategory ? "common" : null,
                     category.name,
                     category.description,
-                    category.category,
                     category.command,
                     category.prefix,
-                    category.gl
+                    category.pattern,
+                    category.replacePattern,
+                    category.showInCommon
             );
         }
 
         public ChatCategory toCategory() {
-            if (this.special != null && this.special.equals("all"))
-                return new AllChatCategory();
-            return new ChatCategory(
-                    this.name,
-                    this.description,
-                    this.category,
-                    this.command,
-                    this.prefix,
-                    this.global_local
-            );
+            return switch (this.special) {
+                case "all" -> new AllChatCategory();
+                case "common" -> new CommonChatCategory();
+                case null, default -> new ChatCategory(
+                        this.name,
+                        this.description,
+                        this.command,
+                        this.prefix,
+                        this.pattern,
+                        this.pattern_replace,
+                        this.show_in_common
+                );
+            };
         }
     }
 }

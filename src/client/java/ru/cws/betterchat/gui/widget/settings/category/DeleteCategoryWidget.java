@@ -11,7 +11,7 @@ public class DeleteCategoryWidget extends ChatWidget {
     private final CategorySettingsScreen screen;
 
     public DeleteCategoryWidget(CategorySettingsScreen screen) {
-        super(0, 0, 170, 20, Text.of("Удалить категорию"), Text.of("Удалить текущую категорию"));
+        super(0, 0, 170, 20, Text.of("Удалить"), Text.of("Удалить текущую категорию"));
         this.screen = screen;
         this.flexRender.setBaseColor(0x60601010);
         this.flexRender.setHoverColor(0x60FF1010);

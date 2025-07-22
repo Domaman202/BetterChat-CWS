@@ -1,7 +1,8 @@
-package ru.cws.betterchat.gui.widget;
+package ru.cws.betterchat.gui.widget.chat;
 
 import net.minecraft.text.Text;
 import ru.cws.betterchat.BetterChatMod;
+import ru.cws.betterchat.gui.widget.ChatWidget;
 
 public class GlobalLocalWidget extends ChatWidget {
     public GlobalLocalWidget(int x, int y) {

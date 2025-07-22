@@ -1,4 +1,4 @@
-package ru.cws.betterchat.gui.widget;
+package ru.cws.betterchat.gui.widget.chat;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -7,7 +7,7 @@ import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
 import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.category.ChatCategory;
-import ru.cws.betterchat.util.IChatScreen;
+import ru.cws.betterchat.gui.widget.ChatWidget;
 
 public class CategoryWidget extends ChatWidget {
     public final ChatCategory category;

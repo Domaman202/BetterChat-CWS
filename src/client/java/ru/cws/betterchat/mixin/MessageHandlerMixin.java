@@ -16,7 +16,7 @@ public class MessageHandlerMixin {
     @Overwrite
     public void onGameMessage(Text message, boolean overlay) {
         for (ChatCategory category : BetterChatMod.CATEGORIES) {
-            category.tryAcceptSend(message);
+            category.tryAccept(message);
         }
     }
 }

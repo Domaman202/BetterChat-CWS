@@ -10,7 +10,7 @@ import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.util.IChatHud;
 
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.regex.Pattern;
 
 public class ChatCategory {
     public String name;
@@ -19,7 +19,10 @@ public class ChatCategory {
     public String command;
     public String prefix;
     public boolean gl;
+    //
     public ArrayListDeque<Text> messages;
+    public int cacheHash = 0;
+    public Pattern cachePattern = null;
 
     public ChatCategory(String name, String description, String category, String command, String prefix, boolean gl) {
         this.name = name;
@@ -29,51 +32,68 @@ public class ChatCategory {
         this.prefix = prefix;
         this.gl = gl;
         this.messages = new ArrayListDeque<>(100);
+        this.cacheHash = 0;
+        this.cachePattern = null;
     }
 
     public void onOpen() {
-        var client = MinecraftClient.getInstance();
-        ((IChatHud) client.inGameHud.getChatHud()).BetterChat$setMessages(this.messages);
-        BetterChatMod.tryCommand(client, Objects.requireNonNullElseGet(this.command, () -> !this.gl || BetterChatMod.GLOBAL_CHAT ? "gc" : "lc"));
+        this.refreshMessages();
+        BetterChatMod.tryCommand(MinecraftClient.getInstance(), Objects.requireNonNullElseGet(this.command, () -> !this.gl || BetterChatMod.GLOBAL_CHAT ? "gc" : "lc"));
+    }
+
+    public void refreshMessages() {
+        ((IChatHud) MinecraftClient.getInstance().inGameHud.getChatHud()).BetterChat$setMessages(this.messages);
     }
 
     public String formatToSend(String message) {
         var msg = message;
-        if (prefix != null)
-            msg = prefix + message;
-        if (category != null)
-            msg = "[" + category + "] " + message;
+        if (this.prefix != null)
+            msg = this.prefix + msg;
+        if (this.category != null)
+            msg = "[" + this.category + "] " + msg;
         return msg;
     }
 
-    public boolean tryAcceptSend(Text message) {
-        if (this.category == null) {
-            this.acceptSend(message);
-            return true;
-        } else {
-            var prefix = "[" + this.category + "] ";
-            var msg = checkAndReplaceSend(message, it -> it.startsWith(prefix), it -> it.substring(prefix.length()));
-            if (msg != null) {
-                this.acceptSend(msg);
-                return true;
-            }
+    public void tryAccept(Text message) {
+        var msg = checkReplaceAccepting(message, this.getPattern());
+        if (msg != null) {
+            this.accept(msg);
         }
-        return false;
     }
 
-    public void acceptSend(Text message) {
+    public Pattern getPattern() {
+        if (this.hashCode() != this.cacheHash) {
+            var pattern = new StringBuilder("\\s*");
+            if (this.prefix != null)
+                pattern.append(this.prefix).append("\\s*");
+            if (this.category != null)
+                pattern.append("\\[").append(this.category).append("\\]\\s*");
+            this.cachePattern = Pattern.compile(pattern.toString());
+            this.cacheHash = this.hashCode();
+        }
+        return this.cachePattern;
+    }
+
+    public void accept(Text message) {
         if (messages.size() == 100)
             this.messages.removeLast();
         this.messages.addFirst(message);
     }
 
-    protected @Nullable Text checkAndReplaceSend(Text message, Function<String, Boolean> check, Function<String, String> replace) {
+    protected static @Nullable Text checkReplaceAccepting(Text message, Pattern regex) {
         var content = message.getContent();
         switch (content.getType().id()) {
             case "text" -> {
                 var text = ((PlainTextContent) content).string();
-                if (text != null && check.apply(text)) {
-                    return Text.literal(replace.apply(text)).setStyle(message.getStyle());
+                if (text.isEmpty()) {
+                    var sibling = message.getSiblings().getFirst();
+                    if (sibling == null)
+                        return null;
+                    return checkReplaceAccepting(sibling, regex);
+                }
+                var matcher = regex.matcher(text);
+                if (matcher.find()) {
+                    return Text.literal(matcher.replaceAll("")).setStyle(message.getStyle());
                 }
             }
             case "translatable" -> {
@@ -81,21 +101,32 @@ public class ChatCategory {
                 switch (translatable.getKey()) {
                     case "chat.type.text" -> {
                         var text = translatable.getArg(1).getString();
-                        if (text != null && check.apply(text)) {
-                            translatable.getArgs()[1] = Text.literal(replace.apply(text)).setStyle(((Text) translatable.getArgs()[1]).getStyle());
+                        var matcher = regex.matcher(text);
+                        if (matcher.find()) {
+                            translatable.getArgs()[1] = Text.literal(matcher.replaceAll("")).setStyle(((Text) translatable.getArgs()[1]).getStyle());
                             return Text.translatable("chat.type.text", translatable.getArgs());
                         }
                     }
+                    case "command.unknown.command" -> {
+                        var matcher = regex.matcher("Неизвестная команда");
+                        if (matcher.find()) {
+                            return Text.literal(matcher.replaceAll("")).setStyle(message.getStyle());
+                        }
+                    }
                     default -> {
-                        if (BetterChatMod.NO_THROW)
+                        if (BetterChatMod.NO_THROW) {
+                            BetterChatMod.LOGGER.trace("Fail to parse translatable conent: {}", translatable);
                             return null;
+                        }
                         throw new RuntimeException("Unsupported text type: " + translatable.getKey());
                     }
                 }
             }
             default -> {
-                if (BetterChatMod.NO_THROW)
+                if (BetterChatMod.NO_THROW) {
+                    BetterChatMod.LOGGER.trace("Fail to parse message content: {}", content);
                     return null;
+                }
                 throw new RuntimeException("Unsupported text type: " + content.getType().id());
             }
         }

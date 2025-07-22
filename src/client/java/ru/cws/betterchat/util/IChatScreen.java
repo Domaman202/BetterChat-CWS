@@ -1,6 +1,6 @@
 package ru.cws.betterchat.util;
 
-import ru.cws.betterchat.gui.widget.CategoryWidget;
+import ru.cws.betterchat.gui.widget.chat.CategoryWidget;
 
 import java.util.List;
 

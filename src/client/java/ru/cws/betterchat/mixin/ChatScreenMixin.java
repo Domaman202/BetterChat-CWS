@@ -14,9 +14,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.cws.betterchat.BetterChatMod;
-import ru.cws.betterchat.gui.widget.CategoryWidget;
-import ru.cws.betterchat.gui.widget.GlobalLocalWidget;
-import ru.cws.betterchat.gui.widget.SettingsWidget;
+import ru.cws.betterchat.gui.widget.chat.CategoryWidget;
+import ru.cws.betterchat.gui.widget.chat.GlobalLocalWidget;
+import ru.cws.betterchat.gui.widget.chat.SettingsWidget;
 import ru.cws.betterchat.util.IChatScreen;
 
 import java.util.List;
@@ -24,15 +24,10 @@ import java.util.List;
 @Mixin(ChatScreen.class)
 public abstract class ChatScreenMixin extends Screen implements IChatScreen {
     @Shadow protected TextFieldWidget chatField;
-
-    protected ChatScreenMixin(Text title) {super(title);}
-
-    @Unique
-    private SettingsWidget BetterChat$settings;
-    @Unique
-    private GlobalLocalWidget BetterChat$gl;
     @Unique
     private List<CategoryWidget> BetterChat$tabs;
+
+    protected ChatScreenMixin(Text title) {super(title);}
 
     @Override
     public List<CategoryWidget> BetterChat$tabs() {
@@ -45,13 +40,13 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen {
         //
         var offset = 2;
         //
-        this.BetterChat$settings = new SettingsWidget(offset, this.height - 24);
-        this.addDrawableChild(this.BetterChat$settings);
-        offset += this.BetterChat$settings.getWidth() + 1;
+        var settings = new SettingsWidget(offset, this.height - 24);
+        this.addDrawableChild(settings);
+        offset += settings.getWidth() + 1;
         //
-        this.BetterChat$gl = new GlobalLocalWidget(offset, this.height - 24);
-        this.addDrawableChild(this.BetterChat$gl);
-        offset += this.BetterChat$gl.getWidth() + 1;
+        var gl = new GlobalLocalWidget(offset, this.height - 24);
+        this.addDrawableChild(gl);
+        offset += gl.getWidth() + 1;
         //
         if (BetterChatMod.SELECTED_CATEGORY == null)
             BetterChatMod.SELECTED_CATEGORY = BetterChatMod.CATEGORIES.getFirst();

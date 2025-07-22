@@ -1,6 +1,9 @@
-package ru.cws.betterchat.gui.widget;
+package ru.cws.betterchat.gui.widget.chat;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
+import ru.cws.betterchat.gui.widget.ChatWidget;
+import ru.cws.betterchat.screen.ModSettingsScreen;
 
 public class SettingsWidget extends ChatWidget {
     public SettingsWidget(int x, int y) {
@@ -9,6 +12,6 @@ public class SettingsWidget extends ChatWidget {
 
     @Override
     public void onPress() {
-        // todo: open settings screen
+        MinecraftClient.getInstance().setScreen(new ModSettingsScreen());
     }
 }

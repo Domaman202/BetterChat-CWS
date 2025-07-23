@@ -52,18 +52,18 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
         //
         if (this.category == BetterChatMod.ALL_CATEGORY) {
             addSettingsWidget(new AllChatVanillaSettingsWidget());
-        } else if (this.category == BetterChatMod.COMMON_CATEGORY) {
-            //
         } else {
-            addTextField(
-                    this.category.command,
-                    "Команда (Выполняется при переключении на категорию)",
-                    this::emptyToNull,
-                    it -> {
-                        this.category.command = it;
-                        BetterChatMod.autosave();
-                    }
-            );
+            if (this.category != BetterChatMod.COMMON_CATEGORY) {
+                addTextField(
+                        this.category.command,
+                        "Команда (Выполняется при переключении на категорию)",
+                        this::emptyToNull,
+                        it -> {
+                            this.category.command = it;
+                            BetterChatMod.autosave();
+                        }
+                );
+            }
             addTextField(
                     this.category.prefix,
                     "Префикс (Добавляется в начале сообщения при его отправке",
@@ -82,9 +82,11 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
                         BetterChatMod.autosave();
                     }
             );
-            this.addSettingsWidget(new ReplacePatternSettingsWidget(this));
-            this.addSettingsWidget(new ShowInCommonSettingsWidget(this));
-            this.addSettingsWidget(new DeleteCategoryWidget(this));
+            if (this.category != BetterChatMod.COMMON_CATEGORY) {
+                this.addSettingsWidget(new ReplacePatternSettingsWidget(this));
+                this.addSettingsWidget(new ShowInCommonSettingsWidget(this));
+                this.addSettingsWidget(new DeleteCategoryWidget(this));
+            }
         }
     }
 

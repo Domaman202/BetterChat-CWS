@@ -34,7 +34,7 @@ public class AddCategoryWidget extends ChatWidget {
         tab.setY(this.height / 2 - 95);
         this.screen.addDrawableChild(tab);
         this.screen.tabsOffset += tab.getWidth() + 1;
-        MinecraftClient.getInstance().setScreen(new CategorySettingsScreen(category, this.screen.tabs, this.screen.tabListPosition));
+        MinecraftClient.getInstance().setScreen(new CategorySettingsScreen(category, this.screen.tabs, this.screen.tabListPosition + 1));
     }
 
     @Override

@@ -129,7 +129,6 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
         var xe = x + 248;
         var ys = Math.max(4, y - 75);
         var ye = Math.max(4, y - 50 + this.settingsOffset);
-        System.out.println("x: " + x + ", y: " + y + ", xs: " + xs + ", ys: " + ys + ", xe: " + xe + ", ye: " + ye);
         // Отрисовка фона
         context.fill(xs, ys, xe, ye, 0x60606060);
         // Отрисовка заголовка

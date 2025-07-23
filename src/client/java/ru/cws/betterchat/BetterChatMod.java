@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class BetterChatMod implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(BetterChatMod.class);
@@ -42,6 +43,7 @@ public class BetterChatMod implements ClientModInitializer {
     public static boolean NO_HEAVY_TEXTURES = false;
     public static boolean NO_THROW = true;
     public static boolean AUTOSAVE = true;
+    public static Pattern USER_SENDER_PATTERN = Pattern.compile("<[a-zA-Z0-9_]{3,16}>");
 
     @Override
     public void onInitializeClient() {

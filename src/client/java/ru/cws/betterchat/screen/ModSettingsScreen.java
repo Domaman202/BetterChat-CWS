@@ -5,7 +5,12 @@ import ru.cws.betterchat.gui.widget.settings.mod.*;
 
 public class ModSettingsScreen extends AbstractSettingsScreen {
     public ModSettingsScreen() {
+        this(0);
+    }
+
+    public ModSettingsScreen(int tabListPosition) {
         super(Text.of("Настройки чата"));
+        this.tabListPosition = tabListPosition;
     }
 
     @Override

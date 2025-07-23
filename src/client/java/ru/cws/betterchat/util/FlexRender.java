@@ -42,7 +42,7 @@ public class FlexRender implements IFlexRender {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY) {
         // Рендерим базовую область
-        context.fill(this.sized.getX(), this.sized.getY(), this.sized.getX() + this.sized.getWidth(), this.sized.getY() + this.sized.getHeight(), BASE_COLOR);
+        context.fill(this.sized.BetterChat$getX(), this.sized.BetterChat$getY(), this.sized.BetterChat$getX() + this.sized.BetterChat$getWidth(), this.sized.BetterChat$getY() + this.sized.BetterChat$getHeight(), BASE_COLOR);
 
         // Проверяем необходимость обновления кэша
         if (Math.abs(mouseX - lastMouseX) > 2 || Math.abs(mouseY - lastMouseY) > 2) {
@@ -59,14 +59,14 @@ public class FlexRender implements IFlexRender {
     }
 
     private void updateIntensityCache(int mouseX, int mouseY) {
-        final float GRID_STEP_X = this.sized.getWidth() / (float) GRID_X_SIZE;
-        final float GRID_STEP_Y = this.sized.getHeight() / (float) GRID_Y_SIZE;
+        final float GRID_STEP_X = this.sized.BetterChat$getWidth() / (float) GRID_X_SIZE;
+        final float GRID_STEP_Y = this.sized.BetterChat$getHeight() / (float) GRID_Y_SIZE;
 
         int index = 0;
         for (int gy = 0; gy < GRID_Y_SIZE; gy++) {
-            float y = this.sized.getY() + gy * GRID_STEP_Y;
+            float y = this.sized.BetterChat$getY() + gy * GRID_STEP_Y;
             for (int gx = 0; gx < GRID_X_SIZE; gx++) {
-                float x = this.sized.getX() + gx * GRID_STEP_X;
+                float x = this.sized.BetterChat$getX() + gx * GRID_STEP_X;
 
                 float dx = x - mouseX;
                 float dy = y - mouseY;
@@ -87,12 +87,12 @@ public class FlexRender implements IFlexRender {
 
     private void renderCachedEffect(DrawContext context) {
         // Базовый размер клетки (целочисленное деление)
-        final int baseCellWidth = this.sized.getWidth() / GRID_X_SIZE;
-        final int baseCellHeight = this.sized.getHeight() / GRID_Y_SIZE;
+        final int baseCellWidth = this.sized.BetterChat$getWidth() / GRID_X_SIZE;
+        final int baseCellHeight = this.sized.BetterChat$getHeight() / GRID_Y_SIZE;
 
         // Остатки для последней клетки
-        final int widthRemainder = this.sized.getWidth() % GRID_X_SIZE;
-        final int heightRemainder = this.sized.getHeight() % GRID_Y_SIZE;
+        final int widthRemainder = this.sized.BetterChat$getWidth() % GRID_X_SIZE;
+        final int heightRemainder = this.sized.BetterChat$getHeight() % GRID_Y_SIZE;
 
         int index = 0;
         for (int gy = 0; gy < GRID_Y_SIZE; gy++) {
@@ -102,7 +102,7 @@ public class FlexRender implements IFlexRender {
                 cellHeight += heightRemainder;
             }
 
-            int yStart = this.sized.getY() + gy * baseCellHeight;
+            int yStart = this.sized.BetterChat$getY() + gy * baseCellHeight;
             int yEnd = yStart + cellHeight;
 
             for (int gx = 0; gx < GRID_X_SIZE; gx++) {
@@ -112,7 +112,7 @@ public class FlexRender implements IFlexRender {
                     cellWidth += widthRemainder;
                 }
 
-                int xStart = this.sized.getX() + gx * baseCellWidth;
+                int xStart = this.sized.BetterChat$getX() + gx * baseCellWidth;
                 int xEnd = xStart + cellWidth;
 
                 float intensity = intensityCache[index++];

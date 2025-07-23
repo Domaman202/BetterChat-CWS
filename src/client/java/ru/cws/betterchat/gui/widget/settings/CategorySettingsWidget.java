@@ -30,7 +30,7 @@ public class CategorySettingsWidget extends ChatWidget {
     public void onPress() {
         if (this.selected) {
             this.selected = false;
-            MinecraftClient.getInstance().setScreen(new ModSettingsScreen());
+            MinecraftClient.getInstance().setScreen(new ModSettingsScreen(this.screen.tabListPosition));
         } else {
             for (CategorySettingsWidget tab : this.screen.tabs)
                 tab.selected = false;

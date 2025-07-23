@@ -135,6 +135,11 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
         BetterChatMod.CHAT_SCREEN = this;
     }
 
+    @Inject(method = "resize", at = @At("TAIL"))
+    public void resize(CallbackInfo ci) {
+        this.BetterCombat$recalcTabsList();
+    }
+
     @Inject(method = "removed", at = @At("TAIL"))
     public void removed(CallbackInfo ci) {
         BetterChatMod.CHAT_SCREEN = null;

@@ -21,6 +21,6 @@ public class DeleteCategoryWidget extends ChatWidget {
     public void onPress() {
         BetterChatMod.CATEGORIES.remove(this.screen.category);
         BetterChatMod.autosave();
-        MinecraftClient.getInstance().setScreen(new ModSettingsScreen());
+        MinecraftClient.getInstance().setScreen(new ModSettingsScreen(this.screen.tabListPosition > 0 ? (this.screen.tabListPosition - 1) : 0));
     }
 }

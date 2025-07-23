@@ -1,5 +1,6 @@
 package ru.cws.betterchat.screen;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
@@ -110,6 +111,12 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
     @Override
     protected void init() {
         super.init();
+        this.BetterCombat$recalcTabsList();
+    }
+
+    @Override
+    public void resize(MinecraftClient client, int width, int height) {
+        super.resize(client, width, height);
         this.BetterCombat$recalcTabsList();
     }
 

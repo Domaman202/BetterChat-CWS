@@ -45,8 +45,23 @@ public abstract class ChatWidget extends PressableWidget implements ISized {
         return DEFAULT_NARRATION_SUPPLIER.createNarrationMessage(super::getNarrationMessage);
     }
 
-    public ChatWidget setActive(boolean active) {
-        this.active = active;
-        return this;
+    @Override
+    public int BetterChat$getX() {
+        return this.getX();
+    }
+
+    @Override
+    public int BetterChat$getY() {
+        return this.getY();
+    }
+
+    @Override
+    public int BetterChat$getWidth() {
+        return this.getWidth();
+    }
+
+    @Override
+    public int BetterChat$getHeight() {
+        return this.getHeight();
     }
 }

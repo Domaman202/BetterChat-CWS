@@ -25,6 +25,6 @@ public class NoFlexRender implements IFlexRender {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY) {
-        context.fill(this.sized.getX(), this.sized.getY(), this.sized.getX() + this.sized.getWidth(), this.sized.getY() + this.sized.getHeight(), BASE_COLOR);
+        context.fill(this.sized.BetterChat$getX(), this.sized.BetterChat$getY(), this.sized.BetterChat$getX() + this.sized.BetterChat$getWidth(), this.sized.BetterChat$getY() + this.sized.BetterChat$getHeight(), BASE_COLOR);
     }
 }

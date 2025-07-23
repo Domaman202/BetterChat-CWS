@@ -16,13 +16,15 @@ import ru.cws.betterchat.util.ISized;
 import java.util.function.Supplier;
 
 public abstract class ChatWidget extends PressableWidget implements ISized {
+    public static final int GRID_X_SIZE = 10;
+    public static final int GRID_Y_SIZE = 20;
     public static final ButtonWidget.NarrationSupplier DEFAULT_NARRATION_SUPPLIER = Supplier::get;
     protected final IFlexRender flexRender;
 
     public ChatWidget(int i, int j, int k, int l, Text text, Text tooltip) {
         super(i, j, k, l, text);
         this.setTooltip(Tooltip.of(tooltip));
-        this.flexRender = IFlexRender.create(this, 10, 20);
+        this.flexRender = IFlexRender.create(this, GRID_X_SIZE, GRID_Y_SIZE);
     }
 
     @Override

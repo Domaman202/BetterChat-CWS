@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
+import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.category.ChatCategory;
 import ru.cws.betterchat.gui.widget.ChatWidget;
 import ru.cws.betterchat.screen.AbstractSettingsScreen;
@@ -17,7 +18,7 @@ public class CategorySettingsWidget extends ChatWidget {
     public boolean selected;
 
     public CategorySettingsWidget(ChatCategory category, AbstractSettingsScreen screen) {
-        super(0, 0, category.name.length() * 10, 20, Text.of(category.name), Text.of(category.description));
+        super(0, 0, BetterChatMod.FIXED_TAB_SIZE ? BetterChatMod.SETTINGS_VIEW_TAB_SIZE : Math.min(80, category.name.length() * 10), 20, Text.of(category.name), Text.of(category.description));
         this.category = category;
         this.screen = screen;
         this.selected = false;
@@ -34,7 +35,7 @@ public class CategorySettingsWidget extends ChatWidget {
             for (CategorySettingsWidget tab : this.screen.tabs)
                 tab.selected = false;
             this.selected = true;
-            var newScreen = new CategorySettingsScreen(this.category, this.screen.tabs);
+            var newScreen = new CategorySettingsScreen(this.category, this.screen.tabs, this.screen.tabListPosition);
             MinecraftClient.getInstance().setScreen(newScreen);
             this.screen = newScreen;
         }

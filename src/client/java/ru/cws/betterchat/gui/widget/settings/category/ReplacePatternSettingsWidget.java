@@ -1,6 +1,7 @@
 package ru.cws.betterchat.gui.widget.settings.category;
 
 import net.minecraft.text.Text;
+import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.gui.widget.ChatWidget;
 import ru.cws.betterchat.screen.CategorySettingsScreen;
 
@@ -16,6 +17,7 @@ public class ReplacePatternSettingsWidget extends ChatWidget {
     @Override
     public void onPress() {
         this.screen.category.replacePattern = !this.screen.category.replacePattern;
+        BetterChatMod.autosave();
         this.update();
     }
 

@@ -6,15 +6,15 @@ import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.gui.widget.ChatWidget;
 import ru.cws.betterchat.screen.ModSettingsScreen;
 
-public class FlexRenderSettingsWidget extends ChatWidget {
-    public FlexRenderSettingsWidget() {
-        super(0, 0, 160, 20, null, Text.of("Переключить красивую отрисовку"));
-        if (BetterChatMod.NO_FLEX) {
-            this.setMessage(Text.of("FlexRender (Выкл)"));
+public class HeavyTexturesSettingsWidget extends ChatWidget {
+    public HeavyTexturesSettingsWidget() {
+        super(0, 0, 230, 20, null, Text.of("Переключить красивые текстуры"));
+        if (BetterChatMod.NO_HEAVY_TEXTURES) {
+            this.setMessage(Text.of("Тяжёлые текстуры (Выкл)"));
             this.flexRender.setBaseColor(0x60601010);
             this.flexRender.setHoverColor(0x60FF1010);
         } else {
-            this.setMessage(Text.of("FlexRender (Вкл) "));
+            this.setMessage(Text.of("Тяжёлые текстуры (Вкл) "));
             this.flexRender.setBaseColor(0x60106010);
             this.flexRender.setHoverColor(0x6060FF60);
         }
@@ -22,7 +22,7 @@ public class FlexRenderSettingsWidget extends ChatWidget {
 
     @Override
     public void onPress() {
-        BetterChatMod.NO_FLEX = !BetterChatMod.NO_FLEX;
+        BetterChatMod.NO_HEAVY_TEXTURES = !BetterChatMod.NO_HEAVY_TEXTURES;
         BetterChatMod.autosave();
         MinecraftClient.getInstance().setScreen(new ModSettingsScreen());
     }

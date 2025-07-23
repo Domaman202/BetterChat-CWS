@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface IChatScreen {
     List<CategoryWidget> BetterChat$tabs();
-    GlobalLocalWidget BetterChat$globalLocalWidget();
 }

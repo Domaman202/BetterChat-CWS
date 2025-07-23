@@ -24,7 +24,7 @@ public class AllChatCategory extends ChatCategory {
     }
 
     private void tryAcceptMaybeSelected(Text message, boolean selected) {
-        if (BetterChatMod.ALL_CHAT_DEFAULT) {
+        if (BetterChatMod.ALL_CHAT_VANILLA) {
             this.accept(message);
             return;
         }

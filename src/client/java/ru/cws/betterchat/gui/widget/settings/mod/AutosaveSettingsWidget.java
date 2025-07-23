@@ -13,6 +13,7 @@ public class AutosaveSettingsWidget extends ChatWidget {
     @Override
     public void onPress() {
         BetterChatMod.AUTOSAVE = !BetterChatMod.AUTOSAVE;
+        BetterChatMod.autosave();
         this.update();
     }
 

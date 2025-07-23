@@ -14,22 +14,46 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.cws.betterchat.BetterChatMod;
+import ru.cws.betterchat.gui.widget.ListLeftWidget;
+import ru.cws.betterchat.gui.widget.ListRightWidget;
+import ru.cws.betterchat.gui.widget.chat.AllCategoryWidget;
 import ru.cws.betterchat.gui.widget.chat.CategoryWidget;
 import ru.cws.betterchat.gui.widget.chat.GlobalLocalWidget;
 import ru.cws.betterchat.gui.widget.chat.SettingsWidget;
 import ru.cws.betterchat.util.IChatScreen;
+import ru.cws.betterchat.util.ITabListenScreen;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ChatScreen.class)
-public abstract class ChatScreenMixin extends Screen implements IChatScreen {
-    @Shadow protected TextFieldWidget chatField;
+public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITabListenScreen {
+    @Shadow
+    protected TextFieldWidget chatField;
     @Unique
     private List<CategoryWidget> BetterChat$tabs;
     @Unique
-    private GlobalLocalWidget BetterCombat$globalLocalWidget;
+    private SettingsWidget BetterCombat$settingsWidget;
+    @Unique
+    private ListLeftWidget BetterChat$listLeftWidget;
+    @Unique
+    private ListRightWidget BetterChat$listRightWidget;
+    @Unique
+    private GlobalLocalWidget BetterChat$globalLocalWidget;
+    @Unique
+    private int tabListPosition = 0;
 
     protected ChatScreenMixin(Text title) {super(title);}
+
+    @Override
+    public void BetterCombat$setTabListPosition(int position) {
+        this.tabListPosition = position;
+    }
+
+    @Override
+    public int BetterCombat$getTabListPosition() {
+        return this.tabListPosition;
+    }
 
     @Override
     public List<CategoryWidget> BetterChat$tabs() {
@@ -37,29 +61,59 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen {
     }
 
     @Override
-    public GlobalLocalWidget BetterChat$globalLocalWidget() {
-        return this.BetterCombat$globalLocalWidget;
-    }
-
-    @Inject(method = "init", at = @At("TAIL"))
-    protected void init(CallbackInfo ci) {
-        this.chatField.setY(this.height - 36);
+    public void BetterCombat$recalcTabsList() {
+        if (this.BetterCombat$settingsWidget != null)
+            this.remove(this.BetterCombat$settingsWidget);
+        if (this.BetterChat$listLeftWidget != null)
+            this.remove(this.BetterChat$listLeftWidget);
+        if (this.BetterChat$listRightWidget != null)
+            this.remove(this.BetterChat$listRightWidget);
+        if (this.BetterChat$globalLocalWidget != null)
+            this.remove(this.BetterChat$globalLocalWidget);
+        //
+        if (this.BetterChat$tabs != null) {
+            this.BetterChat$tabs.forEach(this::remove);
+            this.BetterChat$tabs.clear();
+        } else {
+            this.BetterChat$tabs = new ArrayList<>();
+        }
         //
         var offset = 2;
         //
-        var settings = new SettingsWidget(offset, this.height - 24);
-        this.addDrawableChild(settings);
-        offset += settings.getWidth() + 1;
+        this.BetterCombat$settingsWidget = new SettingsWidget(offset, this.height - 24);
+        this.addDrawableChild(this.BetterCombat$settingsWidget);
+        offset += this.BetterCombat$settingsWidget.getWidth() + 1;
         //
-        var gl = new GlobalLocalWidget(offset, this.height - 24);
-        this.addDrawableChild(gl);
-        this.BetterCombat$globalLocalWidget = gl;
-        offset += gl.getWidth() + 1;
+        var allCategoryWidget = AllCategoryWidget.create();
+        this.BetterChat$tabs.add(allCategoryWidget);
+        allCategoryWidget.setX(offset);
+        allCategoryWidget.setY(this.height - 24);
+        this.addDrawableChild(allCategoryWidget);
+        offset += allCategoryWidget.getWidth() + 1;
         //
-        if (BetterChatMod.SELECTED_CATEGORY == null)
+        this.BetterChat$globalLocalWidget = GlobalLocalWidget.create(offset, this.height - 24);
+        this.addDrawableChild(this.BetterChat$globalLocalWidget);
+        offset += this.BetterChat$globalLocalWidget.getWidth() + 1;
+        //
+        this.BetterChat$listLeftWidget = ListLeftWidget.create(this, true);
+        this.BetterChat$listLeftWidget.setX(offset);
+        this.BetterChat$listLeftWidget.setY(this.height - 24);
+        this.addDrawableChild(this.BetterChat$listLeftWidget);
+        offset += this.BetterChat$listLeftWidget.getWidth() + 1;
+        //
+        //
+        if (BetterChatMod.SELECTED_CATEGORY == null) {
             BetterChatMod.SELECTED_CATEGORY = BetterChatMod.COMMON_CATEGORY;
-        this.BetterChat$tabs = BetterChatMod.CATEGORIES.stream().map(CategoryWidget::new).toList();
-        for (var tab : this.BetterChat$tabs) {
+        }
+        //
+        for (int i = 0, j = 0; i < Math.min(BetterChatMod.CATEGORIES.size(), BetterChatMod.CHAT_VIEW_TABS_COUNT) + j; i++) {
+            var category = BetterChatMod.CATEGORIES.get(this.tabListPosition + i);
+            if (category == BetterChatMod.ALL_CATEGORY) {
+                j++;
+                continue;
+            }
+            var tab = new CategoryWidget(category);
+            this.BetterChat$tabs.add(tab);
             tab.setX(offset);
             tab.setY(this.height - 24);
             tab.updateActive();
@@ -67,6 +121,17 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen {
             offset += tab.getWidth() + 1;
         }
         //
+        this.BetterChat$listRightWidget = ListRightWidget.create(this, true);
+        this.BetterChat$listRightWidget.setX(offset);
+        this.BetterChat$listRightWidget.setY(this.height - 24);
+        this.addDrawableChild(this.BetterChat$listRightWidget);
+        offset += this.BetterChat$listRightWidget.getWidth() + 1;
+    }
+
+    @Inject(method = "init", at = @At("TAIL"))
+    protected void init(CallbackInfo ci) {
+        this.chatField.setY(this.height - 36);
+        this.BetterCombat$recalcTabsList();
         BetterChatMod.CHAT_SCREEN = this;
     }
 

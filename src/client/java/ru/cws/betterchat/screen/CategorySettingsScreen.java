@@ -4,12 +4,10 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import ru.cws.betterchat.BetterChatMod;
-import ru.cws.betterchat.category.AllChatCategory;
 import ru.cws.betterchat.category.ChatCategory;
-import ru.cws.betterchat.category.CommonChatCategory;
 import ru.cws.betterchat.gui.widget.*;
 import ru.cws.betterchat.gui.widget.settings.CategorySettingsWidget;
-import ru.cws.betterchat.gui.widget.settings.category.AllChatDefaultSettingsWidget;
+import ru.cws.betterchat.gui.widget.settings.category.AllChatVanillaSettingsWidget;
 import ru.cws.betterchat.gui.widget.settings.category.DeleteCategoryWidget;
 import ru.cws.betterchat.gui.widget.settings.category.ReplacePatternSettingsWidget;
 import ru.cws.betterchat.gui.widget.settings.category.ShowInCommonSettingsWidget;
@@ -21,10 +19,11 @@ import java.util.function.Supplier;
 public class CategorySettingsScreen extends AbstractSettingsScreen {
     public final ChatCategory category;
 
-    public CategorySettingsScreen(ChatCategory category, List<CategorySettingsWidget> tabs) {
+    public CategorySettingsScreen(ChatCategory category, List<CategorySettingsWidget> tabs, int tabListPosition) {
         super(Text.of("Настройки категории"));
         this.category = category;
         this.tabs = tabs;
+        this.tabListPosition = tabListPosition;
     }
 
     @Override
@@ -38,7 +37,7 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
                 it -> {
                     this.category.name = it;
                     BetterChatMod.autosave();
-                    this.recalcTabs();
+                    this.BetterCombat$recalcTabsList();
                 }
         );
         addTextField(
@@ -52,7 +51,7 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
         );
         //
         if (this.category == BetterChatMod.ALL_CATEGORY) {
-            addSettingsWidget(new AllChatDefaultSettingsWidget());
+            addSettingsWidget(new AllChatVanillaSettingsWidget());
         } else if (this.category == BetterChatMod.COMMON_CATEGORY) {
             //
         } else {

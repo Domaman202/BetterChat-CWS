@@ -1,10 +1,7 @@
 package ru.cws.betterchat.screen;
 
 import net.minecraft.text.Text;
-import ru.cws.betterchat.gui.widget.settings.mod.AutosaveSettingsWidget;
-import ru.cws.betterchat.gui.widget.settings.mod.FlexRenderSettingsWidget;
-import ru.cws.betterchat.gui.widget.settings.mod.LoadWidget;
-import ru.cws.betterchat.gui.widget.settings.mod.SaveWidget;
+import ru.cws.betterchat.gui.widget.settings.mod.*;
 
 public class ModSettingsScreen extends AbstractSettingsScreen {
     public ModSettingsScreen() {
@@ -15,6 +12,8 @@ public class ModSettingsScreen extends AbstractSettingsScreen {
     protected void init() {
         super.init();
         //
+        this.addSettingsWidget(new FixedTabSizeSettingsWidget());
+        this.addSettingsWidget(new HeavyTexturesSettingsWidget());
         this.addSettingsWidget(new FlexRenderSettingsWidget());
         this.addSettingsWidget(new AutosaveSettingsWidget());
         //

@@ -11,54 +11,82 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.category.ChatCategory;
+import ru.cws.betterchat.gui.widget.ListLeftWidget;
+import ru.cws.betterchat.gui.widget.ListRightWidget;
 import ru.cws.betterchat.gui.widget.settings.AddCategoryWidget;
 import ru.cws.betterchat.gui.widget.settings.CategorySettingsWidget;
+import ru.cws.betterchat.util.ITabListenScreen;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractSettingsScreen extends Screen {
+public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
     public List<CategorySettingsWidget> tabs;
-    protected AddCategoryWidget addCategory;
+    protected AddCategoryWidget addCategoryWidget;
+    protected ListLeftWidget listLeftWidget;
+    protected ListRightWidget listRightWidget;
     public int tabsLength;
     public int tabsOffset;
     public int settingsOffset;
+    public int tabListPosition;
 
     public AbstractSettingsScreen(Text title) {
         super(title);
     }
 
     @Override
-    protected void init() {
-        super.init();
-        this.recalcTabs();
+    public void BetterCombat$setTabListPosition(int position) {
+        this.tabListPosition = position;
     }
 
-    protected void recalcTabs() {
-        if (this.addCategory != null) {
-            this.remove(this.addCategory);
-        }
+    @Override
+    public int BetterCombat$getTabListPosition() {
+        return this.tabListPosition;
+    }
+
+    @Override
+    public void BetterCombat$recalcTabsList() {
+        if (this.addCategoryWidget != null)
+            this.remove(this.addCategoryWidget);
+        if (this.listLeftWidget != null)
+            this.remove(this.listLeftWidget);
+        if (this.listRightWidget != null)
+            this.remove(this.listRightWidget);
         //
         ChatCategory selected = null;
         if (this.tabs != null) {
-            selected = this.tabs.stream().filter(it -> it.selected).map(it -> it.category).findFirst().get();
+            selected = this.tabs.stream().filter(it -> it.selected).map(it -> it.category).findFirst().orElse(null);
             this.tabs.forEach(this::remove);
             this.tabs.clear();
         } else {
             this.tabs = new ArrayList<>();
         }
         //
-        for (ChatCategory category : BetterChatMod.CATEGORIES) {
+        for (int i = 0; i < Math.min(BetterChatMod.CATEGORIES.size(), BetterChatMod.SETTINGS_VIEW_TABS_COUNT); i++) {
+            var category = BetterChatMod.CATEGORIES.get(this.tabListPosition + i);
             var tab = new CategorySettingsWidget(category, this);
             if (category == selected)
                 tab.selected = true;
             this.tabs.add(tab);
         }
         //
+        this.listLeftWidget = ListLeftWidget.create(this, false);
+        this.listRightWidget = ListRightWidget.create(this, false);
+        this.addCategoryWidget = new AddCategoryWidget(this);
+        //
         var length = 0;
         for (var tab : this.tabs)
             length += tab.getWidth() + 1;
+        length += listLeftWidget.getWidth() + 1;
+        length += listRightWidget.getWidth() + 1;
+        length += addCategoryWidget.getWidth() + 1;
         var offset = this.width / 2 - length;
+        //
+        this.listLeftWidget.setX(offset + length / 2);
+        this.listLeftWidget.setY(this.height / 2 - 95);
+        this.addDrawableChild(this.listLeftWidget);
+        offset += this.listLeftWidget.getWidth() + 1;
+        //
         for (var tab : this.tabs) {
             tab.setX(offset + length / 2);
             tab.setY(this.height / 2 - 95);
@@ -66,14 +94,23 @@ public class AbstractSettingsScreen extends Screen {
             offset += tab.getWidth() + 1;
         }
         //
-        this.addCategory = new AddCategoryWidget(this);
-        this.addCategory.setX(offset + length / 2);
-        this.addCategory.setY(this.height / 2 - 95);
-        this.addDrawableChild(this.addCategory);
-        offset += this.addCategory.getWidth() + 1;
+        this.addCategoryWidget.setX(offset + length / 2);
+        this.addCategoryWidget.setY(this.height / 2 - 95);
+        this.addDrawableChild(this.addCategoryWidget);
+        offset += this.addCategoryWidget.getWidth() + 1;
+        this.listRightWidget.setX(offset + length / 2);
+        this.listRightWidget.setY(this.height / 2 - 95);
+        this.addDrawableChild(this.listRightWidget);
+        offset += this.listRightWidget.getWidth();
         //
-        this.tabsLength = Math.max(120, length);
+        this.tabsLength = Math.max(120, Math.min(248, length));
         this.tabsOffset = offset;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        this.BetterCombat$recalcTabsList();
     }
 
     @Override
@@ -81,32 +118,17 @@ public class AbstractSettingsScreen extends Screen {
         // Вычисляем координаты
         var x = this.width / 2;
         var y = this.height / 2;
-        var xs = this.getXStart(x);
-        var xe = this.getXEnd(x);
-        var ys = this.getYStart(y);
-        var ye = this.getYEnd(y);
+        var xs = x - 249;
+        var xe = x + 248;
+        var ys = Math.max(4, y - 75);
+        var ye = Math.max(4, y - 50 + this.settingsOffset);
+        System.out.println("x: " + x + ", y: " + y + ", xs: " + xs + ", ys: " + ys + ", xe: " + xe + ", ye: " + ye);
         // Отрисовка фона
         context.fill(xs, ys, xe, ye, 0x60606060);
         // Отрисовка заголовка
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, x, ys + 4, Colors.WHITE);
         // Родительская отрисовка
         super.render(context, mouseX, mouseY, deltaTicks);
-    }
-
-    protected int getXStart(int x) {
-        return Math.max(4, x - this.tabsLength);
-    }
-
-    protected int getXEnd(int x) {
-        return Math.min(this.width - 4, x + this.tabsLength);
-    }
-
-    protected int getYStart(int y) {
-        return Math.max(4, y - 75);
-    }
-
-    protected int getYEnd(int y) {
-        return Math.max(4, y - 50 + this.settingsOffset);
     }
 
     @Override

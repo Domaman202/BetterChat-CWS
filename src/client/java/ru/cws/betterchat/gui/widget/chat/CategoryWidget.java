@@ -13,7 +13,11 @@ public class CategoryWidget extends ChatWidget {
     public final ChatCategory category;
 
     public CategoryWidget(ChatCategory category) {
-        super(0, 0, category.name.length() * 10, 20, Text.of(category.name), Text.of(category.description));
+        this(0, 0, BetterChatMod.FIXED_TAB_SIZE ? BetterChatMod.CHAT_VIEW_TAB_SIZE : (category.name.length() * 10), 20, category);
+    }
+
+    public CategoryWidget(int i, int j, int k, int l, ChatCategory category) {
+        super(i, j, k, l, Text.of(category.name), Text.of(category.description));
         this.category = category;
         this.flexRender.setBaseColor(0x60606060);
         this.flexRender.setHoverColor(0x806060F0);
@@ -28,9 +32,9 @@ public class CategoryWidget extends ChatWidget {
         BetterChatMod.SELECTED_CATEGORY = this.category;
         this.category.onOpen();
         this.active = false;
-        for (CategoryWidget tab : BetterChatMod.CHAT_SCREEN.BetterChat$tabs())
+        for (CategoryWidget tab : BetterChatMod.CHAT_SCREEN.BetterChat$tabs()) {
             tab.updateActive();
-        BetterChatMod.CHAT_SCREEN.BetterChat$globalLocalWidget().update();
+        }
     }
 
     @Override

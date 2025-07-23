@@ -8,29 +8,35 @@ import ru.cws.betterchat.category.CommonChatCategory;
 import java.util.List;
 
 public record ConfigHelper(
-        boolean all_chat_default,
+        boolean all_chat_vanilla,
         boolean global_local,
-        boolean no_throw,
+        boolean fixed_tab_size,
         boolean no_flex,
+        boolean no_heave_textures,
+        boolean no_throw,
         boolean autosave,
         List<CategoryHelper> categories
 )  {
     public static ConfigHelper fromMod() {
         return new ConfigHelper(
-                BetterChatMod.ALL_CHAT_DEFAULT,
+                BetterChatMod.ALL_CHAT_VANILLA,
                 BetterChatMod.GLOBAL_LOCAL,
-                BetterChatMod.NO_THROW,
+                BetterChatMod.FIXED_TAB_SIZE,
                 BetterChatMod.NO_FLEX,
+                BetterChatMod.NO_HEAVY_TEXTURES,
+                BetterChatMod.NO_THROW,
                 BetterChatMod.AUTOSAVE,
                 BetterChatMod.CATEGORIES.stream().map(CategoryHelper::fromCategory).toList()
         );
     }
 
     public void toMod() {
-        BetterChatMod.ALL_CHAT_DEFAULT = this.all_chat_default;
+        BetterChatMod.ALL_CHAT_VANILLA = this.all_chat_vanilla;
         BetterChatMod.GLOBAL_LOCAL = this.global_local;
-        BetterChatMod.NO_THROW = this.no_throw;
+        BetterChatMod.FIXED_TAB_SIZE = this.fixed_tab_size;
         BetterChatMod.NO_FLEX = this.no_flex;
+        BetterChatMod.NO_HEAVY_TEXTURES = this.no_heave_textures;
+        BetterChatMod.NO_THROW = this.no_throw;
         BetterChatMod.AUTOSAVE = this.autosave;
         BetterChatMod.CATEGORIES.clear();
         this.categories.stream().map(CategoryHelper::toCategory).forEach(BetterChatMod.CATEGORIES::add);

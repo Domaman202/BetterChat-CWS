@@ -26,15 +26,21 @@ public class BetterChatMod implements ClientModInitializer {
     public static final String CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "betterchat/config.json").getAbsolutePath();
     public static final String DEFAULT_CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "betterchat/default.json").getAbsolutePath();
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final int SETTINGS_VIEW_TABS_COUNT = 5;
+    public static final int CHAT_VIEW_TABS_COUNT = 10;
+    public static final int SETTINGS_VIEW_TAB_SIZE = 80;
+    public static final int CHAT_VIEW_TAB_SIZE = 79;
     public static List<ChatCategory> CATEGORIES = new ArrayList<>();
     public static ChatCategory SELECTED_CATEGORY;
     public static CommonChatCategory COMMON_CATEGORY;
     public static AllChatCategory ALL_CATEGORY;
     public static IChatScreen CHAT_SCREEN = null;
-    public static boolean ALL_CHAT_DEFAULT = true;
+    public static boolean ALL_CHAT_VANILLA = true;
     public static boolean GLOBAL_LOCAL = true;
-    public static boolean NO_THROW = true;
+    public static boolean FIXED_TAB_SIZE = true;
     public static boolean NO_FLEX = false;
+    public static boolean NO_HEAVY_TEXTURES = false;
+    public static boolean NO_THROW = true;
     public static boolean AUTOSAVE = true;
 
     @Override
@@ -60,6 +66,18 @@ public class BetterChatMod implements ClientModInitializer {
             CATEGORIES.add(new ChatCategory("Группа", "Чат группы", null, "@", "^\\[party]", true, true));
             CATEGORIES.add(new ChatCategory("Гильдия", "Чат поселения", "tc", null, "^\\[TC]", true, true));
             CATEGORIES.add(new ChatCategory("Альянс", "Чат нации", "nc", null, "^\\[NC]", true, true));
+            CATEGORIES.add(new ChatCategory("1", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("2", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("3", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("4", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("5", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("6", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("7", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("8", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("9", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("10", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("11", "", null, null, null, false, false));
+            CATEGORIES.add(new ChatCategory("12", "", null, null, null, false, false));
             save(CONFIG_FILE);
             save(DEFAULT_CONFIG_FILE);
         }

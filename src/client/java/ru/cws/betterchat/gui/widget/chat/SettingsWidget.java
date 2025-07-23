@@ -12,7 +12,7 @@ public class SettingsWidget extends ChatWidget {
     private static final Identifier TEXTURE = Identifier.of("betterchat", "textures/gui/settings.png");
 
     public SettingsWidget(int x, int y) {
-        super(x, y, 20, 20, null, Text.of("Меню настроек"));
+        super(x, y, 20, 20, Text.of("[S]"), Text.of("Меню настроек"));
         this.flexRender.setBaseColor(0x60606060);
         this.flexRender.setHoverColor(0x60FF4040);
     }

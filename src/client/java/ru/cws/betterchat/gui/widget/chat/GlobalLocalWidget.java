@@ -22,7 +22,7 @@ public abstract class GlobalLocalWidget extends ChatWidget {
     public void onPress() {
         if (BetterChatMod.SELECTED_CATEGORY == BetterChatMod.COMMON_CATEGORY) {
             BetterChatMod.GLOBAL_LOCAL = !BetterChatMod.GLOBAL_LOCAL;
-            BetterChatMod.tryCommand(BetterChatMod.GLOBAL_LOCAL ? "gc" : "lc");
+            BetterChatMod.tryCommand(BetterChatMod.GLOBAL_LOCAL ? "g" : "lc");
         }
     }
 

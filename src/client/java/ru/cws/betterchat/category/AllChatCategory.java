@@ -16,8 +16,8 @@ public class AllChatCategory extends ChatCategory {
     }
 
     @Override
-    public void tryAcceptSelected(Text message) {
-        this.tryAcceptMaybeSelected(message, true);
+    public void tryAcceptSelected(String message) {
+        this.tryAcceptMaybeSelected(literal(getAcceptingContent(message)), true);
     }
 
     private void tryAcceptMaybeSelected(Text message, boolean selected) {
@@ -26,7 +26,7 @@ public class AllChatCategory extends ChatCategory {
             return;
         }
 
-        var content = ChatCategory.getAcceptingContent(message);
+        var content = ChatCategory.getAcceptingContent(ChatCategory.getAcceptingString(message));
 
         var nonFounded = true;
         for (var category : BetterChatMod.CATEGORIES) {

@@ -1,6 +1,7 @@
 package ru.cws.betterchat.category;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.ArrayListDeque;
 import org.jetbrains.annotations.Nullable;
@@ -71,13 +72,12 @@ public class ChatCategory {
         return this.cachedPattern;
     }
 
-    public void tryAcceptSelected(Text message) {
-        var msg = checkReplaceAccepting(message, this.prefixPattern(), this.replacePattern ? "" : null);
-        if (msg != null) {
-            this.accept(msg);
-            if (this.showInCommon) {
-                BetterChatMod.COMMON_CATEGORY.acceptSelectedFromOther(this, message);
-            }
+    public void tryAcceptSelected(String message) {
+        var content = getAcceptingContent(message);
+        var msg = literal(content);
+        this.accept(msg);
+        if (this.showInCommon) {
+            BetterChatMod.COMMON_CATEGORY.acceptSelectedFromOther(this, msg);
         }
     }
 
@@ -96,39 +96,58 @@ public class ChatCategory {
     }
 
     public static @Nullable Text checkReplaceAccepting(Text message, @Nullable Pattern regex, @Nullable String replace) {
-        var content = getAcceptingContent(message);
+        var string = getAcceptingString(message);
 
         if (regex == null) {
-            return literal(content.sender(), content.content());
+            return literal(getAcceptingContent(string));
         }
 
-        var matcher = regex.matcher(content.content());
+        var matcher = regex.matcher(string);
         if (matcher.find()) {
-            return literal(content.sender(), replace == null ? content.content() : matcher.replaceAll(replace));
+            return literal(getAcceptingContent(replace == null ? string : matcher.replaceAll(replace)));
+        }
+
+        var content = getAcceptingContent(string);
+        var matcherC = regex.matcher(content.content());
+        if (matcherC.find()) {
+            return literal(replace == null ? content : new AcceptingContent(matcherC.replaceAll(replace), content.sender()));
         }
 
         return null;
     }
 
-    public static Text literal(String sender, String replaced) {
-        return Text.literal("§r§7<" + (sender == null ? "§4§oSystem" : ("§3§o" + sender)) + "§r§7> §r§f" + replaced);
-
+    public static Text literal(AcceptingContent content) {
+        return Text.literal("§r§7<" + (content.sender() == null ? "§4§oSystem" : ("§3§o" + content.sender())) + "§r§7> §r§f" + content.content());
     }
 
-    public static AcceptingContent getAcceptingContent(Text message) {
+    public static AcceptingContent getAcceptingContent(String message) {
+        var townyPrefixMatcher = BetterChatMod.TOWNY_PREFIX_PATTERN.matcher(message);
+        if (townyPrefixMatcher.find()) {
+            message = townyPrefixMatcher.replaceAll("");
+            var townySenderMatcher = BetterChatMod.TOWNY_SENDER_PATTERN.matcher(message);
+            if (townySenderMatcher.find()) {
+                var sender = townySenderMatcher.group(0);
+                return new AcceptingContent(townySenderMatcher.replaceAll("").trim(), sender.substring(0, sender.length() - 2));
+            }
+        } else {
+            var vanillaSenderMatcher = BetterChatMod.VANILLA_SENDER_PATTERN.matcher(message);
+            if (vanillaSenderMatcher.find()) {
+                var sender = vanillaSenderMatcher.group(0);
+                return new AcceptingContent(vanillaSenderMatcher.replaceAll("").trim(), sender.substring(1, sender.length() - 2));
+            }
+        }
+
+        return new AcceptingContent(message, null);
+    }
+
+    public static String getAcceptingString(Text message) {
         var ordered = message.asOrderedText();
         var builder = new StringBuilder();
         ordered.accept((index, style, codePoint) -> {
             builder.appendCodePoint(codePoint);
             return true;
         });
-        var text = builder.toString();
-        var matcher = BetterChatMod.USER_SENDER_PATTERN.matcher(text);
-        if (matcher.find()) {
-            var sender = matcher.group(0);
-            return new AcceptingContent(matcher.replaceAll("").trim(), sender.substring(1, sender.length() - 1));
-        }
-        return new AcceptingContent(text, null);
+        return builder.toString();
     }
 
     public record AcceptingContent(String content, String sender) {

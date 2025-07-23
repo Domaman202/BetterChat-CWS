@@ -43,14 +43,16 @@ public class BetterChatMod implements ClientModInitializer {
     public static boolean NO_HEAVY_TEXTURES = false;
     public static boolean NO_THROW = true;
     public static boolean AUTOSAVE = true;
-    public static Pattern USER_SENDER_PATTERN = Pattern.compile("<[a-zA-Z0-9_]{3,16}>");
+    public static Pattern VANILLA_SENDER_PATTERN = Pattern.compile("<[a-zA-Z0-9_]{3,16}> ");
+    public static Pattern TOWNY_PREFIX_PATTERN = Pattern.compile(" ?\\[world(_[a-z]+)?]( [a-zA-Z0-9]+)? ?");
+    public static Pattern TOWNY_SENDER_PATTERN = Pattern.compile("[a-zA-Z0-9_]{3,16}: ");
 
     @Override
     public void onInitializeClient() {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             if (SELECTED_CATEGORY == null)
                 SELECTED_CATEGORY = COMMON_CATEGORY;
-            tryCommand(GLOBAL_LOCAL ? "gc" : "lc");
+            tryCommand(GLOBAL_LOCAL ? "g" : "lc");
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             for (ChatCategory category : CATEGORIES) {

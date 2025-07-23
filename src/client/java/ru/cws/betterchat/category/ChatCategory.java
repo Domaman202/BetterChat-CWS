@@ -24,6 +24,8 @@ public class ChatCategory {
     //
     public int cachedHash;
     public Pattern cachedPattern;
+    public int cachedPrefixHash;
+    public Pattern cachedPrefixPattern;
     public ArrayListDeque<Text> messages;
 
     public ChatCategory(String name, String description, String command, String prefix, String pattern, boolean replacePattern, boolean showInCommon) {
@@ -58,13 +60,36 @@ public class ChatCategory {
         var msg = checkReplaceAccepting(message, this.pattern(), this.replacePattern ? "" : null);
         if (msg != null) {
             this.accept(msg);
+            if (this.showInCommon) {
+                BetterChatMod.COMMON_CATEGORY.acceptFromOther(this, message);
+            }
         }
     }
 
     public Pattern pattern() {
+        if (this.pattern == null)
+            return null;
         if (this.pattern.hashCode() != this.cachedHash)
             this.cachedPattern = Pattern.compile(this.pattern);
         return this.cachedPattern;
+    }
+
+    public void tryAcceptSelected(Text message) {
+        var msg = checkReplaceAccepting(message, this.prefixPattern(), this.replacePattern ? "" : null);
+        if (msg != null) {
+            this.accept(msg);
+            if (this.showInCommon) {
+                BetterChatMod.COMMON_CATEGORY.acceptSelectedFromOther(this, message);
+            }
+        }
+    }
+
+    public Pattern prefixPattern() {
+        if (this.prefix == null)
+            return null;
+        if (this.prefix.hashCode() != this.cachedPrefixHash)
+            this.cachedPrefixPattern = Pattern.compile("^" + Pattern.quote(this.prefix));
+        return this.cachedPrefixPattern;
     }
 
     public void accept(Text message) {
@@ -73,7 +98,7 @@ public class ChatCategory {
         this.messages.addFirst(message);
     }
 
-    protected static @Nullable Text checkReplaceAccepting(Text message, Pattern regex, @Nullable String replace) {
+    public static @Nullable Text checkReplaceAccepting(Text message, @Nullable Pattern regex, @Nullable String replace) {
         var content = message.getContent();
         switch (content.getType().id()) {
             case "text" -> {
@@ -84,9 +109,9 @@ public class ChatCategory {
                         return null;
                     return checkReplaceAccepting(sibling, regex, replace);
                 }
-                var matcher = regex.matcher(text);
-                if (matcher.find()) {
-                    return replace == null ? message : Text.literal(matcher.replaceAll(replace)).setStyle(message.getStyle());
+                var matcher = regex == null ? null : regex.matcher(text);
+                if (regex == null || matcher.find()) {
+                    return regex == null || replace == null ? message : Text.literal(matcher.replaceAll(replace)).setStyle(message.getStyle());
                 }
             }
             case "translatable" -> {
@@ -94,21 +119,20 @@ public class ChatCategory {
                 switch (translatable.getKey()) {
                     case "chat.type.text" -> {
                         var text = translatable.getArg(1).getString();
-                        var matcher = regex.matcher(text);
-                        if (matcher.find()) {
+                        var matcher = regex == null ? null : regex.matcher(text);
+                        if (regex == null || matcher.find()) {
                             if (replace == null)
                                 return message;
                             var args = translatable.getArgs();
                             var newArgs = (Object[]) Array.newInstance(args.getClass().componentType(), args.length);
                             System.arraycopy(args, 0, newArgs, 0, args.length);
-                            newArgs[1] = Text.literal(matcher.replaceAll(replace)).setStyle(((Text) args[1]).getStyle());
-                            return Text.translatable("chat.type.text", newArgs);
+                            return Text.literal("§r§7<§3§o" + ((Text) args[0]).getString() + "§r§7> §r§f" + (regex == null ? text : matcher.replaceAll(replace)));
                         }
                     }
                     case "command.unknown.command" -> {
-                        var matcher = regex.matcher("Неизвестная команда");
-                        if (matcher.find()) {
-                            return replace == null ? message : Text.literal(matcher.replaceAll(replace)).setStyle(message.getStyle());
+                        var matcher = regex == null ? null : regex.matcher("Неизвестная команда");
+                        if (regex == null || matcher.find()) {
+                            return regex == null || replace == null ? message : Text.literal(matcher.replaceAll(replace)).setStyle(message.getStyle());
                         }
                     }
                     default -> {

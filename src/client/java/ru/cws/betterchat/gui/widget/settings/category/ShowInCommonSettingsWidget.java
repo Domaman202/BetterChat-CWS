@@ -8,7 +8,7 @@ public class ShowInCommonSettingsWidget extends ChatWidget {
     private final CategorySettingsScreen screen;
 
     public ShowInCommonSettingsWidget(CategorySettingsScreen screen) {
-        super(0, 0, 180, 20, null, Text.of("Переключение дублирования сообщений в общем чате"));
+        super(0, 0, 190, 20, null, Text.of("Переключение дублирования сообщений в общем чате"));
         this.screen = screen;
         this.update();
     }
@@ -21,11 +21,11 @@ public class ShowInCommonSettingsWidget extends ChatWidget {
 
     protected void update() {
         if (this.screen.category.showInCommon) {
-            this.setMessage(Text.of("Дубилование (Вкл) "));
+            this.setMessage(Text.of("Дублирование (Вкл) "));
             this.flexRender.setBaseColor(0x60106010);
             this.flexRender.setHoverColor(0x6060FF60);
         } else {
-            this.setMessage(Text.of("Дубилование (Выкл)"));
+            this.setMessage(Text.of("Дублирование (Выкл)"));
             this.flexRender.setBaseColor(0x60601010);
             this.flexRender.setHoverColor(0x60FF1010);
         }

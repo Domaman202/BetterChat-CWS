@@ -9,6 +9,7 @@ import java.util.List;
 
 public record ConfigHelper(
         boolean all_chat_default,
+        boolean global_local,
         boolean no_throw,
         boolean no_flex,
         boolean autosave,
@@ -17,6 +18,7 @@ public record ConfigHelper(
     public static ConfigHelper fromMod() {
         return new ConfigHelper(
                 BetterChatMod.ALL_CHAT_DEFAULT,
+                BetterChatMod.GLOBAL_LOCAL,
                 BetterChatMod.NO_THROW,
                 BetterChatMod.NO_FLEX,
                 BetterChatMod.AUTOSAVE,
@@ -26,6 +28,7 @@ public record ConfigHelper(
 
     public void toMod() {
         BetterChatMod.ALL_CHAT_DEFAULT = this.all_chat_default;
+        BetterChatMod.GLOBAL_LOCAL = this.global_local;
         BetterChatMod.NO_THROW = this.no_throw;
         BetterChatMod.NO_FLEX = this.no_flex;
         BetterChatMod.AUTOSAVE = this.autosave;
@@ -45,7 +48,7 @@ public record ConfigHelper(
     ) {
         public static CategoryHelper fromCategory(ChatCategory category) {
             return new CategoryHelper(
-                    category instanceof AllChatCategory? "all" : category instanceof CommonChatCategory ? "common" : null,
+                    category == BetterChatMod.ALL_CATEGORY ? "all" : category == BetterChatMod.COMMON_CATEGORY ? "common" : null,
                     category.name,
                     category.description,
                     category.command,
@@ -58,8 +61,16 @@ public record ConfigHelper(
 
         public ChatCategory toCategory() {
             return switch (this.special) {
-                case "all" -> new AllChatCategory();
-                case "common" -> new CommonChatCategory();
+                case "all" -> {
+                    var category = new AllChatCategory();
+                    BetterChatMod.ALL_CATEGORY = category;
+                    yield category;
+                }
+                case "common" -> {
+                    var category = new CommonChatCategory();
+                    BetterChatMod.COMMON_CATEGORY = category;
+                    yield category;
+                }
                 case null, default -> new ChatCategory(
                         this.name,
                         this.description,

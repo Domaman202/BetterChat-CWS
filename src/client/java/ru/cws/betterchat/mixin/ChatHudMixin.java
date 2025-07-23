@@ -52,8 +52,8 @@ public abstract class ChatHudMixin implements IChatHud {
      */
     @Overwrite
     private void addMessage(ChatHudLine message) {
-        for (ChatCategory category : BetterChatMod.CATEGORIES) {
+        for (ChatCategory category : BetterChatMod.CATEGORIES)
             category.tryAccept(message.content());
-        }
+        BetterChatMod.SELECTED_CATEGORY.refreshMessages();
     }
 }

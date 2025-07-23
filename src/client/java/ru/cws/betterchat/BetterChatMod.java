@@ -28,15 +28,22 @@ public class BetterChatMod implements ClientModInitializer {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static List<ChatCategory> CATEGORIES = new ArrayList<>();
     public static ChatCategory SELECTED_CATEGORY;
+    public static CommonChatCategory COMMON_CATEGORY;
+    public static AllChatCategory ALL_CATEGORY;
     public static IChatScreen CHAT_SCREEN = null;
     public static boolean ALL_CHAT_DEFAULT = true;
+    public static boolean GLOBAL_LOCAL = true;
     public static boolean NO_THROW = true;
     public static boolean NO_FLEX = false;
     public static boolean AUTOSAVE = true;
 
     @Override
     public void onInitializeClient() {
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> tryCommand("gc"));
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            if (SELECTED_CATEGORY == null)
+                SELECTED_CATEGORY = COMMON_CATEGORY;
+            tryCommand(GLOBAL_LOCAL ? "gc" : "lc");
+        });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             for (ChatCategory category : CATEGORIES) {
                 category.messages.clear();
@@ -46,10 +53,13 @@ public class BetterChatMod implements ClientModInitializer {
         if (new File(CONFIG_FILE).exists()) {
             load(CONFIG_FILE);
         } else {
-            CATEGORIES.add(new AllChatCategory());
-            CATEGORIES.add(new CommonChatCategory());
-            CATEGORIES.add(new ChatCategory("Клан", "Клановый игровой чат", null, "[clan]", "^\\[clan\\]", true, true));
-            CATEGORIES.add(new ChatCategory("Поддержка", "Чат технической поддержки", null, "[support]", "^\\[support\\]", true, false));
+            COMMON_CATEGORY = new CommonChatCategory();
+            ALL_CATEGORY = new AllChatCategory();
+            CATEGORIES.add(ALL_CATEGORY);
+            CATEGORIES.add(COMMON_CATEGORY);
+            CATEGORIES.add(new ChatCategory("Группа", "Чат группы", null, "@", "^\\[party]", true, true));
+            CATEGORIES.add(new ChatCategory("Гильдия", "Чат поселения", "tc", null, "^\\[TC]", true, true));
+            CATEGORIES.add(new ChatCategory("Альянс", "Чат нации", "nc", null, "^\\[NC]", true, true));
             save(CONFIG_FILE);
             save(DEFAULT_CONFIG_FILE);
         }

@@ -57,7 +57,7 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen {
         offset += gl.getWidth() + 1;
         //
         if (BetterChatMod.SELECTED_CATEGORY == null)
-            BetterChatMod.SELECTED_CATEGORY = BetterChatMod.CATEGORIES.getFirst();
+            BetterChatMod.SELECTED_CATEGORY = BetterChatMod.COMMON_CATEGORY;
         this.BetterChat$tabs = BetterChatMod.CATEGORIES.stream().map(CategoryWidget::new).toList();
         for (var tab : this.BetterChat$tabs) {
             tab.setX(offset);

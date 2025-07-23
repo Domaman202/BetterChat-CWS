@@ -51,9 +51,10 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
                 }
         );
         //
-        if (this.category instanceof AllChatCategory) {
+        if (this.category == BetterChatMod.ALL_CATEGORY) {
             addSettingsWidget(new AllChatDefaultSettingsWidget());
-        } else if (this.category instanceof CommonChatCategory) {
+        } else if (this.category == BetterChatMod.COMMON_CATEGORY) {
+            //
         } else {
             addTextField(
                     this.category.command,

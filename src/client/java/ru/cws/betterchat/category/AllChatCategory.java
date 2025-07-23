@@ -15,6 +15,15 @@ public class AllChatCategory extends ChatCategory {
 
     @Override
     public void tryAccept(Text message) {
+        this.tryAcceptMaybeSelected(message, false);
+    }
+
+    @Override
+    public void tryAcceptSelected(Text message) {
+        this.tryAcceptMaybeSelected(message, true);
+    }
+
+    private void tryAcceptMaybeSelected(Text message, boolean selected) {
         if (BetterChatMod.ALL_CHAT_DEFAULT) {
             this.accept(message);
             return;
@@ -28,9 +37,9 @@ public class AllChatCategory extends ChatCategory {
 
         var nonFounded = true;
         for (var category : BetterChatMod.CATEGORIES) {
-            if (category instanceof AllChatCategory)
+            if (category == BetterChatMod.ALL_CATEGORY)
                 continue;
-            var matcher = category.pattern().matcher(content.content);
+            var matcher = (selected ? category.prefixPattern() : category.pattern()).matcher(content.content);
             if (matcher.find()) {
                 nonFounded = false;
                 var text = new StringBuilder();

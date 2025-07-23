@@ -41,9 +41,7 @@ public class MessageHandlerMixin {
     private void processChatMessageInternalAdd(MessageType.Parameters params, SignedMessage message, Text decorated, GameProfile sender, boolean onlyShowSecureChat, Instant receptionTimestamp, CallbackInfoReturnable<Boolean> cir) {
         if (!sender.getId().equals(MinecraftClient.getInstance().player.getGameProfile().getId())) {
             for (ChatCategory category : BetterChatMod.CATEGORIES)
-                if (category != BetterChatMod.SELECTED_CATEGORY)
-                    category.tryAccept(decorated);
-            BetterChatMod.SELECTED_CATEGORY.tryAccept(decorated);
+                category.tryAccept(decorated);
             BetterChatMod.SELECTED_CATEGORY.refreshMessages();
         }
     }

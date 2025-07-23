@@ -31,6 +31,7 @@ public class BetterChatMod implements ClientModInitializer {
     public static final int CHAT_VIEW_TABS_COUNT = 10;
     public static final int SETTINGS_VIEW_TAB_SIZE = 80;
     public static final int CHAT_VIEW_TAB_SIZE = 79;
+    public static final Pattern VANILLA_SENDER_PATTERN = Pattern.compile("<[a-zA-Z0-9_]{3,16}> ");
     public static List<ChatCategory> CATEGORIES = new ArrayList<>();
     public static ChatCategory SELECTED_CATEGORY;
     public static CommonChatCategory COMMON_CATEGORY;
@@ -43,9 +44,6 @@ public class BetterChatMod implements ClientModInitializer {
     public static boolean NO_HEAVY_TEXTURES = false;
     public static boolean NO_THROW = true;
     public static boolean AUTOSAVE = true;
-    public static Pattern VANILLA_SENDER_PATTERN = Pattern.compile("<[a-zA-Z0-9_]{3,16}> ");
-    public static Pattern TOWNY_PREFIX_PATTERN = Pattern.compile(" ?\\[world(_[a-z]+)?]( [a-zA-Z0-9]+)? ?");
-    public static Pattern TOWNY_SENDER_PATTERN = Pattern.compile("[a-zA-Z0-9_]{3,16}: ");
 
     @Override
     public void onInitializeClient() {
@@ -67,9 +65,10 @@ public class BetterChatMod implements ClientModInitializer {
             ALL_CATEGORY = new AllChatCategory();
             CATEGORIES.add(ALL_CATEGORY);
             CATEGORIES.add(COMMON_CATEGORY);
-            CATEGORIES.add(new ChatCategory("Группа", "Чат группы", null, "@", "^\\[party]", true, true));
-            CATEGORIES.add(new ChatCategory("Гильдия", "Чат поселения", "tc", null, "^\\[TC]", true, true));
-            CATEGORIES.add(new ChatCategory("Альянс", "Чат нации", "nc", null, "^\\[NC]", true, true));
+            CATEGORIES.add(new ChatCategory("Торговый", "Игровой чат для покупки и продажи ресурсов", null, "[trade]", "^\\[trade]", true, true));
+            CATEGORIES.add(new ChatCategory("Поддержка", "Игровой чат для технической поддержки", "say Админы придите", "[support]", "^\\[support]", true, false));
+            // Самой лучшей подруге на свете посвящается <3
+            CATEGORIES.add(new ChatCategory("О прекрасном", "Список всех сообщений с упоминанием Екатерины", null, null, "((Ек|К)ат(е((чк(а|е|ой|у|и))|(ньк(а|е|ой|у|и))|(рин(а|е|ка|ой|у|ы)?)|й)?|и|ь|ю(ня|(х(а|е|и|у)|(ш(а|ей?|у|и)?))?)?|я)|((М|м)аков (Ц|ц)вет))", false, false));
             save(CONFIG_FILE);
             save(DEFAULT_CONFIG_FILE);
         }

@@ -1,7 +1,6 @@
 package ru.cws.betterchat.category;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.ArrayListDeque;
 import org.jetbrains.annotations.Nullable;
@@ -121,20 +120,10 @@ public class ChatCategory {
     }
 
     public static AcceptingContent getAcceptingContent(String message) {
-        var townyPrefixMatcher = BetterChatMod.TOWNY_PREFIX_PATTERN.matcher(message);
-        if (townyPrefixMatcher.find()) {
-            message = townyPrefixMatcher.replaceAll("");
-            var townySenderMatcher = BetterChatMod.TOWNY_SENDER_PATTERN.matcher(message);
-            if (townySenderMatcher.find()) {
-                var sender = townySenderMatcher.group(0);
-                return new AcceptingContent(townySenderMatcher.replaceAll("").trim(), sender.substring(0, sender.length() - 2));
-            }
-        } else {
-            var vanillaSenderMatcher = BetterChatMod.VANILLA_SENDER_PATTERN.matcher(message);
-            if (vanillaSenderMatcher.find()) {
-                var sender = vanillaSenderMatcher.group(0);
-                return new AcceptingContent(vanillaSenderMatcher.replaceAll("").trim(), sender.substring(1, sender.length() - 2));
-            }
+        var vanillaSenderMatcher = BetterChatMod.VANILLA_SENDER_PATTERN.matcher(message);
+        if (vanillaSenderMatcher.find()) {
+            var sender = vanillaSenderMatcher.group(0);
+            return new AcceptingContent(vanillaSenderMatcher.replaceAll(""), sender.substring(1, sender.length() - 2));
         }
 
         return new AcceptingContent(message, null);

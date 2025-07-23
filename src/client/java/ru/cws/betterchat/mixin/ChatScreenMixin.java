@@ -106,7 +106,7 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
             BetterChatMod.SELECTED_CATEGORY = BetterChatMod.COMMON_CATEGORY;
         }
         //
-        for (int i = 0, j = 0; i < Math.min(BetterChatMod.CATEGORIES.size(), BetterChatMod.CHAT_VIEW_TABS_COUNT) + j; i++) {
+        for (int i = 0, j = 0; i < Math.min(BetterChatMod.CATEGORIES.size() - this.tabListPosition, BetterChatMod.CHAT_VIEW_TABS_COUNT + j) ; i++) {
             var category = BetterChatMod.CATEGORIES.get(this.tabListPosition + i);
             if (category == BetterChatMod.ALL_CATEGORY) {
                 j++;

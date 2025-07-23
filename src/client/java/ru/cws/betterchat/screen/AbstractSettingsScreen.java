@@ -62,7 +62,7 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
             this.tabs = new ArrayList<>();
         }
         //
-        for (int i = 0; i < Math.min(BetterChatMod.CATEGORIES.size(), BetterChatMod.SETTINGS_VIEW_TABS_COUNT); i++) {
+        for (int i = 0; i < Math.min(BetterChatMod.CATEGORIES.size() - this.tabListPosition, BetterChatMod.SETTINGS_VIEW_TABS_COUNT); i++) {
             var category = BetterChatMod.CATEGORIES.get(this.tabListPosition + i);
             var tab = new CategorySettingsWidget(category, this);
             if (category == selected)

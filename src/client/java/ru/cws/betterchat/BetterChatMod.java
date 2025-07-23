@@ -66,18 +66,6 @@ public class BetterChatMod implements ClientModInitializer {
             CATEGORIES.add(new ChatCategory("Группа", "Чат группы", null, "@", "^\\[party]", true, true));
             CATEGORIES.add(new ChatCategory("Гильдия", "Чат поселения", "tc", null, "^\\[TC]", true, true));
             CATEGORIES.add(new ChatCategory("Альянс", "Чат нации", "nc", null, "^\\[NC]", true, true));
-            CATEGORIES.add(new ChatCategory("1", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("2", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("3", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("4", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("5", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("6", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("7", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("8", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("9", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("10", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("11", "", null, null, null, false, false));
-            CATEGORIES.add(new ChatCategory("12", "", null, null, null, false, false));
             save(CONFIG_FILE);
             save(DEFAULT_CONFIG_FILE);
         }

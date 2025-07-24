@@ -15,11 +15,12 @@ public class CommonChatCategory extends ChatCategory {
     }
 
     @Override
-    public void tryAccept(Text message) {
+    public boolean tryAccept(Text message) {
         var msg = checkReplaceAccepting(message, this.pattern(), this.replacePattern ? "" : null);
-        if (msg != null) {
-            this.acceptFromOther(this, message);
-        }
+        if (msg == null)
+            return false;
+        this.acceptFromOther(this, message);
+        return true;
     }
 
     @Override

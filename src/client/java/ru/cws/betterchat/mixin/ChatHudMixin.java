@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.category.ChatCategory;
+import ru.cws.betterchat.util.CategoryHelper;
 import ru.cws.betterchat.util.IChatHud;
 
 import java.util.List;
@@ -52,8 +53,6 @@ public abstract class ChatHudMixin implements IChatHud {
      */
     @Overwrite
     private void addMessage(ChatHudLine message) {
-        for (ChatCategory category : BetterChatMod.CATEGORIES)
-            category.tryAccept(message.content());
-        BetterChatMod.SELECTED_CATEGORY.refreshMessages();
+        CategoryHelper.tryAcceptToAll(message.content());
     }
 }

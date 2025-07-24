@@ -53,14 +53,14 @@ public class ChatCategory {
         return this.prefix == null ? message : this.prefix + message;
     }
 
-    public void tryAccept(Text message) {
+    public boolean tryAccept(Text message) {
         var msg = checkReplaceAccepting(message, this.pattern(), this.replacePattern ? "" : null);
-        if (msg != null) {
-            this.accept(msg);
-            if (this.showInCommon) {
-                BetterChatMod.COMMON_CATEGORY.acceptFromOther(this, message);
-            }
-        }
+        if (msg == null)
+            return false;
+        this.accept(msg);
+        if (this.showInCommon)
+            BetterChatMod.COMMON_CATEGORY.acceptFromOther(this, message);
+        return true;
     }
 
     public Pattern pattern() {

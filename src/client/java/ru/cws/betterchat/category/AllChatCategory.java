@@ -11,8 +11,9 @@ public class AllChatCategory extends ChatCategory {
     }
 
     @Override
-    public void tryAccept(Text message) {
+    public boolean tryAccept(Text message) {
         this.tryAcceptMaybeSelected(message, false);
+        return true;
     }
 
     @Override

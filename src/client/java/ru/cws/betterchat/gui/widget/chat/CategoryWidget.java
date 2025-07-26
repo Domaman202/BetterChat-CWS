@@ -12,8 +12,8 @@ import ru.cws.betterchat.gui.widget.ChatWidget;
 public class CategoryWidget extends ChatWidget {
     public final ChatCategory category;
 
-    public CategoryWidget(ChatCategory category) {
-        this(0, 0, BetterChatMod.FIXED_TAB_SIZE ? BetterChatMod.CHAT_VIEW_TAB_SIZE : (category.name.length() * 10), 20, category);
+    public CategoryWidget(int x, int y, ChatCategory category) {
+        this(x, y, getWidth(category), 20, category);
     }
 
     public CategoryWidget(int i, int j, int k, int l, ChatCategory category) {
@@ -21,6 +21,10 @@ public class CategoryWidget extends ChatWidget {
         this.category = category;
         this.flexRender.setBaseColor(0x60606060);
         this.flexRender.setHoverColor(0x806060F0);
+    }
+
+    public static int getWidth(ChatCategory category) {
+        return BetterChatMod.FIXED_TAB_SIZE ? BetterChatMod.CHAT_VIEW_TAB_SIZE : (category.name.length() * 10);
     }
 
     public void updateActive() {

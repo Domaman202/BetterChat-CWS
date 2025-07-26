@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.cws.betterchat.BetterChatMod;
-import ru.cws.betterchat.category.ChatCategory;
 import ru.cws.betterchat.util.CategoryHelper;
 import ru.cws.betterchat.util.IChatHud;
 
@@ -22,10 +21,12 @@ import java.util.List;
 
 @Mixin(ChatHud.class)
 public abstract class ChatHudMixin implements IChatHud {
-    @Shadow @Final private List<ChatHudLine> messages;
-    @Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
-    @Shadow protected abstract void refresh();
-    @Shadow @Final private MinecraftClient client;
+    @Shadow @Final
+    private List<ChatHudLine> messages;
+    @Shadow
+    protected abstract void refresh();
+    @Shadow @Final
+    private MinecraftClient client;
 
     @Override
     public void BetterChat$setMessages(ArrayListDeque<Text> messages) {

@@ -6,7 +6,7 @@ import ru.cws.betterchat.gui.widget.ChatWidget;
 
 public class AutosaveSettingsWidget extends ChatWidget {
     public AutosaveSettingsWidget() {
-        super(0, 0, 210, 20, null, Text.of("Переключение автосохранения конфигурации"));
+        super(0, 0, 0, 20, null, Text.of("Переключение автосохранения конфигурации"));
         this.update();
     }
 

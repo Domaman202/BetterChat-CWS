@@ -8,7 +8,7 @@ import ru.cws.betterchat.screen.ModSettingsScreen;
 
 public class HeavyTexturesSettingsWidget extends ChatWidget {
     public HeavyTexturesSettingsWidget() {
-        super(0, 0, 230, 20, null, Text.of("Переключить красивые текстуры"));
+        super(0, 0, 0, 20, null, Text.of("Переключить красивые текстуры"));
         if (BetterChatMod.NO_HEAVY_TEXTURES) {
             this.setMessage(Text.of("Тяжёлые текстуры (Выкл)"));
             this.flexRender.setBaseColor(0x60601010);

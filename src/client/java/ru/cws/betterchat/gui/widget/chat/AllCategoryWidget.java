@@ -7,21 +7,21 @@ import net.minecraft.util.Identifier;
 import ru.cws.betterchat.BetterChatMod;
 
 public abstract class AllCategoryWidget extends CategoryWidget {
-    public AllCategoryWidget(int width) {
-        super(0, 0, width, 20, BetterChatMod.ALL_CATEGORY);
+    public AllCategoryWidget(int x, int y, int width) {
+        super(x, y, width, 20, BetterChatMod.ALL_CATEGORY);
         this.flexRender.setBaseColor(0x60606060);
         this.flexRender.setHoverColor(0x60FF4040);
     }
 
-    public static AllCategoryWidget create() {
-        return BetterChatMod.NO_HEAVY_TEXTURES ? new Texted() : new Textured();
+    public static AllCategoryWidget create(int x, int y) {
+        return BetterChatMod.NO_HEAVY_TEXTURES ? new Texted(x, y) : new Textured(x, y);
     }
 
     public static class Textured extends AllCategoryWidget {
         private static final Identifier TEXTURE = Identifier.of("betterchat", "textures/gui/a.png");
 
-        public Textured() {
-            super(20);
+        public Textured(int x, int y) {
+            super(x, y, 20);
         }
 
         @Override
@@ -34,8 +34,8 @@ public abstract class AllCategoryWidget extends CategoryWidget {
     }
 
     public static class Texted extends AllCategoryWidget {
-        public Texted() {
-            super(30);
+        public Texted(int x, int y) {
+            super(x, y, 30);
             this.setMessage(Text.of("[A]"));
         }
     }

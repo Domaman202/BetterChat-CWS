@@ -8,7 +8,7 @@ import ru.cws.betterchat.screen.ModSettingsScreen;
 
 public class FixedTabSizeSettingsWidget extends ChatWidget {
     public FixedTabSizeSettingsWidget() {
-        super(0, 0, 190, 20, null, Text.of("Переключение фиксированного размера вкладок категорий"));
+        super(0, 0, 0, 20, null, Text.of("Переключение фиксированного размера вкладок категорий"));
         if (BetterChatMod.FIXED_TAB_SIZE) {
             this.setMessage(Text.of("Фикс. размер (Вкл) "));
             this.flexRender.setBaseColor(0x60106010);

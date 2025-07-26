@@ -8,7 +8,7 @@ import ru.cws.betterchat.screen.ModSettingsScreen;
 
 public class FlexRenderSettingsWidget extends ChatWidget {
     public FlexRenderSettingsWidget() {
-        super(0, 0, 160, 20, null, Text.of("Переключить красивую отрисовку"));
+        super(0, 0, 0, 20, null, Text.of("Переключить красивую отрисовку"));
         if (BetterChatMod.NO_FLEX) {
             this.setMessage(Text.of("FlexRender (Выкл)"));
             this.flexRender.setBaseColor(0x60601010);

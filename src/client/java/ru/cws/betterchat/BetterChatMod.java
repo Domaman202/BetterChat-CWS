@@ -27,8 +27,6 @@ public class BetterChatMod implements ClientModInitializer {
     public static final String CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "betterchat/config.json").getAbsolutePath();
     public static final String DEFAULT_CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "betterchat/default.json").getAbsolutePath();
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final int SETTINGS_VIEW_TABS_COUNT = 5;
-    public static final int CHAT_VIEW_TABS_COUNT = 10;
     public static final int SETTINGS_VIEW_TAB_SIZE = 80;
     public static final int CHAT_VIEW_TAB_SIZE = 79;
     public static final Pattern VANILLA_SENDER_PATTERN = Pattern.compile("<[a-zA-Z0-9_]{3,16}> ");
@@ -69,6 +67,11 @@ public class BetterChatMod implements ClientModInitializer {
             CATEGORIES.add(new ChatCategory("Поддержка", "Игровой чат для технической поддержки", "say Админы придите", "[support]", "^\\[support]", true, false));
             // Самой лучшей подруге на свете посвящается <3
             CATEGORIES.add(new ChatCategory("О прекрасном", "Список всех сообщений с упоминанием Екатерины", null, null, "((Ек|К)ат(е((чк(а|е|ой|у|и))|(ньк(а|е|ой|у|и))|(рин(а|е|ка|ой|у|ы)?)|й)?|и|ь|ю(ня|(х(а|е|и|у)|(ш(а|ей?|у|и)?))?)?|я)|((М|м)аков (Ц|ц)вет))", false, false));
+            //
+//            for (int i = 0; i < 10; i++) {
+//                CATEGORIES.add(new ChatCategory("№" + i, "Категория тесто №" + i, null, null, "", false, false));
+//            }
+            //
             save(CONFIG_FILE);
             save(DEFAULT_CONFIG_FILE);
         }

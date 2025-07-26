@@ -9,23 +9,23 @@ import ru.cws.betterchat.util.ITabListenScreen;
 public abstract class ListLeftWidget extends ChatWidget {
     private final ITabListenScreen screen;
 
-    public ListLeftWidget(ITabListenScreen screen, boolean chatSettings, int width) {
-        super(0, 0, width, 20, Text.of("[◀]"), Text.of("Просмотр предыдущих категорий"));
+    public ListLeftWidget(int x, int y, ITabListenScreen screen, boolean chatSettings, int width) {
+        super(x, y, width, 20, Text.of("[◀]"), Text.of("Просмотр предыдущих категорий"));
         this.screen = screen;
         this.flexRender.setBaseColor(chatSettings ? 0x60606060 : 0x60101060);
         this.flexRender.setHoverColor(0x606060FF);
     }
 
-    public static ListLeftWidget create(ITabListenScreen screen, boolean chatSettings) {
+    public static ListLeftWidget create(int x, int y, ITabListenScreen screen, boolean chatSettings) {
 //        return BetterChatMod.NO_HEAVY_TEXTURES ? new Texted(screen, chatSettings) : new Textured(screen, chatSettings);
-        return new Texted(screen, chatSettings); // Стрелки стрёмные были
+        return new Texted(x, y, screen, chatSettings); // Стрелки стрёмные были
     }
 
     @Override
     public void onPress() {
-        var pos = this.screen.BetterCombat$getTabListPosition();
+        var pos = this.screen.BetterChat$getTabListPosition();
         if (pos > 0) {
-            this.screen.BetterCombat$setTabListPosition(pos - 1);
+            this.screen.BetterChat$setTabListPosition(pos - 1);
             this.screen.BetterCombat$recalcTabsList();
         }
     }
@@ -33,8 +33,8 @@ public abstract class ListLeftWidget extends ChatWidget {
     public static class Textured extends ListLeftWidget {
         private static final Identifier TEXTURE = Identifier.of("betterchat", "textures/gui/left.png");
 
-        public Textured(ITabListenScreen screen, boolean chatSettings) {
-            super(screen, chatSettings, 20);
+        public Textured(int x, int y, ITabListenScreen screen, boolean chatSettings) {
+            super(x, y, screen, chatSettings, 20);
         }
 
         @Override
@@ -47,8 +47,8 @@ public abstract class ListLeftWidget extends ChatWidget {
     }
 
     public static class Texted extends ListLeftWidget {
-        public Texted(ITabListenScreen screen, boolean chatSettings) {
-            super(screen, chatSettings, 30);
+        public Texted(int x, int y, ITabListenScreen screen, boolean chatSettings) {
+            super(x, y, screen, chatSettings, 30);
         }
     }
 }

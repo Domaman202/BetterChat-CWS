@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.cws.betterchat.BetterChatMod;
+import ru.cws.betterchat.gui.widget.ChatWidget;
 import ru.cws.betterchat.gui.widget.ListLeftWidget;
 import ru.cws.betterchat.gui.widget.ListRightWidget;
 import ru.cws.betterchat.gui.widget.chat.AllCategoryWidget;
@@ -33,26 +34,25 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
     @Unique
     private List<CategoryWidget> BetterChat$tabs;
     @Unique
-    private SettingsWidget BetterCombat$settingsWidget;
+    private List<ChatWidget> BetterChat$widgets;
     @Unique
-    private ListLeftWidget BetterChat$listLeftWidget;
-    @Unique
-    private ListRightWidget BetterChat$listRightWidget;
-    @Unique
-    private GlobalLocalWidget BetterChat$globalLocalWidget;
-    @Unique
-    private int tabListPosition = 0;
+    private int BetterChat$tabListPosition = 0;
 
     protected ChatScreenMixin(Text title) {super(title);}
 
     @Override
-    public void BetterCombat$setTabListPosition(int position) {
-        this.tabListPosition = position;
+    public void BetterChat$setTabListPosition(int position) {
+        this.BetterChat$tabListPosition = position;
     }
 
     @Override
-    public int BetterCombat$getTabListPosition() {
-        return this.tabListPosition;
+    public int BetterChat$getTabListPosition() {
+        return this.BetterChat$tabListPosition;
+    }
+
+    @Override
+    public int BetterChat$getTabListMaxPosition() {
+        return BetterChatMod.CATEGORIES.size() - this.BetterChat$tabs.size() + 1;
     }
 
     @Override
@@ -62,70 +62,54 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
 
     @Override
     public void BetterCombat$recalcTabsList() {
-        if (this.BetterCombat$settingsWidget != null)
-            this.remove(this.BetterCombat$settingsWidget);
-        if (this.BetterChat$listLeftWidget != null)
-            this.remove(this.BetterChat$listLeftWidget);
-        if (this.BetterChat$listRightWidget != null)
-            this.remove(this.BetterChat$listRightWidget);
-        if (this.BetterChat$globalLocalWidget != null)
-            this.remove(this.BetterChat$globalLocalWidget);
-        //
         if (this.BetterChat$tabs != null) {
             this.BetterChat$tabs.forEach(this::remove);
             this.BetterChat$tabs.clear();
-        } else {
-            this.BetterChat$tabs = new ArrayList<>();
-        }
+        } else this.BetterChat$tabs = new ArrayList<>();
+        if (this.BetterChat$widgets != null) {
+            this.BetterChat$widgets.forEach(this::remove);
+            this.BetterChat$widgets.clear();
+        } else this.BetterChat$widgets = new ArrayList<>();
         //
         var offset = 2;
-        //
-        this.BetterCombat$settingsWidget = new SettingsWidget(offset, this.height - 24);
-        this.addDrawableChild(this.BetterCombat$settingsWidget);
-        offset += this.BetterCombat$settingsWidget.getWidth() + 1;
-        //
-        var allCategoryWidget = AllCategoryWidget.create();
-        this.BetterChat$tabs.add(allCategoryWidget);
-        allCategoryWidget.setX(offset);
-        allCategoryWidget.setY(this.height - 24);
-        this.addDrawableChild(allCategoryWidget);
-        offset += allCategoryWidget.getWidth() + 1;
-        //
-        this.BetterChat$globalLocalWidget = GlobalLocalWidget.create(offset, this.height - 24);
-        this.addDrawableChild(this.BetterChat$globalLocalWidget);
-        offset += this.BetterChat$globalLocalWidget.getWidth() + 1;
-        //
-        this.BetterChat$listLeftWidget = ListLeftWidget.create(this, true);
-        this.BetterChat$listLeftWidget.setX(offset);
-        this.BetterChat$listLeftWidget.setY(this.height - 24);
-        this.addDrawableChild(this.BetterChat$listLeftWidget);
-        offset += this.BetterChat$listLeftWidget.getWidth() + 1;
-        //
+        var y = this.height - 24;
+        var settings = new SettingsWidget(offset, y);
+        this.BetterChat$widgets.add(settings);
+        this.addDrawableChild(settings);
+        offset += settings.getWidth() + 1;
+        var allCategory = AllCategoryWidget.create(offset, y);
+        this.BetterChat$tabs.add(allCategory);
+        this.addDrawableChild(allCategory);
+        offset += allCategory.getWidth() + 1;
+        var globalLocal = GlobalLocalWidget.create(offset, y);
+        this.BetterChat$widgets.add(globalLocal);
+        this.addDrawableChild(globalLocal);
+        offset += globalLocal.getWidth() + 1;
+        var listLeft = ListLeftWidget.create(offset, y, this, true);
+        this.BetterChat$widgets.add(listLeft);
+        this.addDrawableChild(listLeft);
+        offset += listLeft.getWidth() + 1;
+        var listRight = ListRightWidget.create(offset, y, this, true);
+        this.BetterChat$widgets.add(listRight);
+        this.addDrawableChild(listRight);
+        offset += listRight.getWidth() + 1;
         //
         if (BetterChatMod.SELECTED_CATEGORY == null) {
             BetterChatMod.SELECTED_CATEGORY = BetterChatMod.COMMON_CATEGORY;
         }
         //
-        for (int i = 0, j = 0; i < Math.min(BetterChatMod.CATEGORIES.size() - this.tabListPosition, BetterChatMod.CHAT_VIEW_TABS_COUNT + j) ; i++) {
-            var category = BetterChatMod.CATEGORIES.get(this.tabListPosition + i);
-            if (category == BetterChatMod.ALL_CATEGORY) {
-                j++;
+        for (int i = 0; i < BetterChatMod.CATEGORIES.size() - this.BetterChat$tabListPosition; i++) {
+            var category = BetterChatMod.CATEGORIES.get(this.BetterChat$tabListPosition + i);
+            if (category == BetterChatMod.ALL_CATEGORY)
                 continue;
-            }
-            var tab = new CategoryWidget(category);
+            if (this.width - (offset + CategoryWidget.getWidth(category)) < 0)
+                break;
+            var tab = new CategoryWidget(offset, y, category);
             this.BetterChat$tabs.add(tab);
-            tab.setX(offset);
-            tab.setY(this.height - 24);
             tab.updateActive();
             this.addDrawableChild(tab);
             offset += tab.getWidth() + 1;
         }
-        //
-        this.BetterChat$listRightWidget = ListRightWidget.create(this, true);
-        this.BetterChat$listRightWidget.setX(offset);
-        this.BetterChat$listRightWidget.setY(this.height - 24);
-        this.addDrawableChild(this.BetterChat$listRightWidget);
-        offset += this.BetterChat$listRightWidget.getWidth() + 1;
     }
 
     @Inject(method = "init", at = @At("TAIL"))

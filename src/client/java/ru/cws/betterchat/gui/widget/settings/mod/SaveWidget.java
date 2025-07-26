@@ -9,8 +9,8 @@ import ru.cws.betterchat.gui.widget.ChatWidget;
 import ru.cws.betterchat.screen.ModSettingsScreen;
 
 public class SaveWidget extends ChatWidget {
-    public SaveWidget(int i, int j) {
-        super(i, j, 90, 20, Text.of("Сохранить"), Text.of("Сохранить конфигурацию в выбранный файл"));
+    public SaveWidget(int x, int y, int w) {
+        super(x, y, w, 20, Text.of("Сохранить"), Text.of("Сохранить конфигурацию в выбранный файл"));
         this.flexRender.setBaseColor(0x60606010);
         this.flexRender.setHoverColor(0x60FFFF10);
     }

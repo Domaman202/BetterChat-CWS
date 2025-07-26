@@ -6,23 +6,20 @@ import net.minecraft.util.Colors;
 import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.category.ChatCategory;
 import ru.cws.betterchat.gui.widget.*;
-import ru.cws.betterchat.gui.widget.settings.CategorySettingsWidget;
 import ru.cws.betterchat.gui.widget.settings.category.AllChatVanillaSettingsWidget;
 import ru.cws.betterchat.gui.widget.settings.category.DeleteCategoryWidget;
 import ru.cws.betterchat.gui.widget.settings.category.ReplacePatternSettingsWidget;
 import ru.cws.betterchat.gui.widget.settings.category.ShowInCommonSettingsWidget;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class CategorySettingsScreen extends AbstractSettingsScreen {
     public final ChatCategory category;
 
-    public CategorySettingsScreen(ChatCategory category, List<CategorySettingsWidget> tabs, int tabListPosition) {
-        super(Text.of("Настройки категории"));
+    public CategorySettingsScreen(ChatCategory category, ChatCategory selected, int tabListPosition) {
+        super(Text.of("Настройки категории"), selected);
         this.category = category;
-        this.tabs = tabs;
         this.tabListPosition = tabListPosition;
     }
 
@@ -91,7 +88,7 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
     }
 
     protected void addTextField(String initial, String description, Supplier<String> ifEmpty, Consumer<String> changedListener) {
-        var field = new CenteredTextFieldWidget(this.textRenderer, this.tabsLength, 20, Text.of("Название"));
+        var field = new CenteredTextFieldWidget(this.textRenderer, this.width / 2, 20, Text.of("Название"));
         field.setFocusUnlocked(true);
         field.setEditableColor(Colors.YELLOW);
         field.setUneditableColor(Colors.WHITE);

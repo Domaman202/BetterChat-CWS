@@ -24,7 +24,7 @@ import java.util.List;
 
 public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
     public List<CategorySettingsWidget> tabs;
-    protected List<ChatWidget> widgets;
+    protected List<ClickableWidget> widgets;
     public ChatCategory selected;
     public int settingsOffset;
     public int tabListPosition;
@@ -141,6 +141,7 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
         widget.setX(this.getXC() - widget.getWidth() / 2);
         widget.setY(this.getYC() - 53 + this.settingsOffset);
         this.addDrawableChild(widget);
+        this.widgets.add(widget);
         this.settingsOffset += widget.getHeight() + 1;
     }
 

@@ -25,7 +25,7 @@ public class CategorySettingsWidget extends ChatWidget {
     }
 
     public static int getWidth(ChatCategory category) {
-        return BetterChatMod.FIXED_TAB_SIZE ? BetterChatMod.SETTINGS_VIEW_TAB_SIZE : Math.min(80, category.name.length() * 10);
+        return BetterChatMod.FIXED_TAB_SIZE ? BetterChatMod.SETTINGS_VIEW_TAB_SIZE : (category.name.length() * 10);
     }
 
     @Override

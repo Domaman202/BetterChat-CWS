@@ -28,7 +28,7 @@ public class BetterChatMod implements ClientModInitializer {
     public static final String DEFAULT_CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "betterchat/default.json").getAbsolutePath();
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final int SETTINGS_VIEW_TAB_SIZE = 80;
-    public static final int CHAT_VIEW_TAB_SIZE = 79;
+    public static final int CHAT_VIEW_TAB_SIZE = 80;
     public static final Pattern VANILLA_SENDER_PATTERN = Pattern.compile("<[a-zA-Z0-9_]{3,16}> ");
     public static List<ChatCategory> CATEGORIES = new ArrayList<>();
     public static ChatCategory SELECTED_CATEGORY;

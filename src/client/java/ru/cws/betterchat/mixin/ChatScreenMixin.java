@@ -78,7 +78,7 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
         this.addDrawableChild(settings);
         offset += settings.getWidth() + 1;
         var allCategory = AllCategoryWidget.create(offset, y);
-        this.BetterChat$tabs.add(allCategory);
+//        this.BetterChat$tabs.add(allCategory); // До перерасчёта не трогаем
         this.addDrawableChild(allCategory);
         offset += allCategory.getWidth() + 1;
         var globalLocal = GlobalLocalWidget.create(offset, y);
@@ -97,7 +97,10 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
         if (BetterChatMod.SELECTED_CATEGORY == null) {
             BetterChatMod.SELECTED_CATEGORY = BetterChatMod.COMMON_CATEGORY;
         }
-        //
+        // -- Добавляем вкладки -- //
+        // Сохраняем сдвиг
+        var offsetSave = offset;
+        // Добавляем вкладки
         for (int i = 0; i < BetterChatMod.CATEGORIES.size() - this.BetterChat$tabListPosition; i++) {
             var category = BetterChatMod.CATEGORIES.get(this.BetterChat$tabListPosition + i);
             if (category == BetterChatMod.ALL_CATEGORY)
@@ -110,6 +113,23 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
             this.addDrawableChild(tab);
             offset += tab.getWidth() + 1;
         }
+        // Расширяем вкладки с конца
+        cycle: for (var reverse = this.BetterChat$tabs.reversed();;) {
+            for (var tab : reverse) {
+                if (this.width - offset < 3)
+                    break cycle;
+                tab.setWidth(tab.getWidth() + 1);
+                offset++;
+            }
+        }
+        // Выполняем перерасчёт
+        offset = offsetSave;
+        for (var tab : this.BetterChat$tabs) {
+            tab.setX(offset);
+            offset += tab.getWidth() + 1;
+        }
+        // Чтобы не слетало - добавляем после перерасчёта
+        this.BetterChat$tabs.add(allCategory);
     }
 
     @Inject(method = "init", at = @At("TAIL"))

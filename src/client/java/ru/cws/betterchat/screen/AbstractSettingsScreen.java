@@ -75,7 +75,10 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
         this.widgets.add(addCategory);
         this.addDrawableChild(addCategory);
         offset += addCategory.getWidth() + 1;
-        //
+        // -- Добавляем вкладки -- //
+        // Сохраняем сдвиг
+        var offsetSave = offset;
+        // Добавляем вкладки
         for (int i = 0; i < BetterChatMod.CATEGORIES.size() - this.tabListPosition; i++) {
             var category = BetterChatMod.CATEGORIES.get(this.tabListPosition + i);
             if (category == BetterChatMod.ALL_CATEGORY)
@@ -85,6 +88,21 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
             var tab = new CategorySettingsWidget(offset, y, category, this);
             this.tabs.add(tab);
             this.addDrawableChild(tab);
+            offset += tab.getWidth() + 1;
+        }
+        // Расширяем вкладки с конца
+        cycle: for (var reverse = this.tabs.reversed();;) {
+            for (var tab : reverse) {
+                if (this.getXE() - offset < 0)
+                    break cycle;
+                tab.setWidth(tab.getWidth() + 1);
+                offset++;
+            }
+        }
+        // Выполняем перерасчёт
+        offset = offsetSave;
+        for (var tab : this.tabs) {
+            tab.setX(offset);
             offset += tab.getWidth() + 1;
         }
     }

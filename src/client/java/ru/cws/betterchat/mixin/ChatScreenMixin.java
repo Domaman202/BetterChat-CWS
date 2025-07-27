@@ -61,7 +61,7 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
     }
 
     @Override
-    public void BetterCombat$recalcTabsList() {
+    public void BetterChat$recalcTabsList() {
         if (this.BetterChat$tabs != null) {
             this.BetterChat$tabs.forEach(this::remove);
             this.BetterChat$tabs.clear();
@@ -134,13 +134,13 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
     @Inject(method = "init", at = @At("TAIL"))
     protected void init(CallbackInfo ci) {
         this.chatField.setY(this.height - 36);
-        this.BetterCombat$recalcTabsList();
+        this.BetterChat$recalcTabsList();
         BetterChatMod.CHAT_SCREEN = this;
     }
 
     @Inject(method = "resize", at = @At("TAIL"))
     public void resize(CallbackInfo ci) {
-        this.BetterCombat$recalcTabsList();
+        this.BetterChat$recalcTabsList();
     }
 
     @Inject(method = "removed", at = @At("TAIL"))

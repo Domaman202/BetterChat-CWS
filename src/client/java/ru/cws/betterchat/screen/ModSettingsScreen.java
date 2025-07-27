@@ -14,8 +14,8 @@ public class ModSettingsScreen extends AbstractSettingsScreen {
     }
 
     @Override
-    public void BetterCombat$recalcTabsList() {
-        super.BetterCombat$recalcTabsList();
+    public void BetterChat$recalcTabsList() {
+        super.BetterChat$recalcTabsList();
         //
         this.addSettingsWidget(new FixedTabSizeSettingsWidget());
         this.addSettingsWidget(new HeavyTexturesSettingsWidget());

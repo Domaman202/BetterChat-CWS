@@ -17,16 +17,20 @@ public abstract class ListLeftWidget extends ChatWidget {
     }
 
     public static ListLeftWidget create(int x, int y, ITabListenScreen screen, boolean chatSettings) {
-//        return BetterChatMod.NO_HEAVY_TEXTURES ? new Texted(screen, chatSettings) : new Textured(screen, chatSettings);
+//        return BetterChatMod.NO_HEAVY_TEXTURES ? new Texted(x, y, screen, chatSettings) : new Textured(x, y, screen, chatSettings);
         return new Texted(x, y, screen, chatSettings); // Стрелки стрёмные были
     }
 
     @Override
     public void onPress() {
-        var pos = this.screen.BetterChat$getTabListPosition();
+        onPress(this.screen);
+    }
+
+    public static void onPress(ITabListenScreen screen) {
+        var pos = screen.BetterChat$getTabListPosition();
         if (pos > 0) {
-            this.screen.BetterChat$setTabListPosition(pos - 1);
-            this.screen.BetterCombat$recalcTabsList();
+            screen.BetterChat$setTabListPosition(pos - 1);
+            screen.BetterChat$recalcTabsList();
         }
     }
 

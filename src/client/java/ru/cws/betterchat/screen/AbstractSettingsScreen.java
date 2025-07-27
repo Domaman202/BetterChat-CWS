@@ -12,12 +12,12 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.category.ChatCategory;
-import ru.cws.betterchat.gui.widget.ChatWidget;
 import ru.cws.betterchat.gui.widget.ListLeftWidget;
 import ru.cws.betterchat.gui.widget.ListRightWidget;
 import ru.cws.betterchat.gui.widget.chat.CategoryWidget;
 import ru.cws.betterchat.gui.widget.settings.AddCategoryWidget;
 import ru.cws.betterchat.gui.widget.settings.CategorySettingsWidget;
+import ru.cws.betterchat.gui.widget.settings.category.AllChatVanillaSettingsWidget;
 import ru.cws.betterchat.util.ITabListenScreen;
 
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
     }
 
     @Override
-    public void BetterCombat$recalcTabsList() {
+    public void BetterChat$recalcTabsList() {
         if (this.tabs != null) {
             this.tabs.forEach(this::remove);
             this.tabs.clear();
@@ -81,8 +81,6 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
         var freeSpace = this.getXE() - offset;
         for (int i = 0; i < BetterChatMod.CATEGORIES.size() - this.tabListPosition; i++) {
             var category = BetterChatMod.CATEGORIES.get(this.tabListPosition + i);
-            if (category == BetterChatMod.ALL_CATEGORY)
-                continue;
             var width = CategoryWidget.getWidth(category);
             if (freeSpace - width < 0)
                 break;
@@ -110,13 +108,13 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
     @Override
     protected void init() {
         super.init();
-        this.BetterCombat$recalcTabsList();
+        this.BetterChat$recalcTabsList();
     }
 
     @Override
     public void resize(MinecraftClient client, int width, int height) {
         super.resize(client, width, height);
-        this.BetterCombat$recalcTabsList();
+        this.BetterChat$recalcTabsList();
     }
 
     @Override

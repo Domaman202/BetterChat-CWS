@@ -13,7 +13,7 @@ import ru.cws.betterchat.screen.CategorySettingsScreen;
 import ru.cws.betterchat.screen.ModSettingsScreen;
 
 public class CategorySettingsWidget extends ChatWidget {
-    private AbstractSettingsScreen screen;
+    private final AbstractSettingsScreen screen;
     public final ChatCategory category;
 
     public CategorySettingsWidget(int x, int y, ChatCategory category, AbstractSettingsScreen screen) {
@@ -30,12 +30,11 @@ public class CategorySettingsWidget extends ChatWidget {
 
     @Override
     public void onPress() {
-        if (this.category == this.screen.selected) {
-            MinecraftClient.getInstance().setScreen(new ModSettingsScreen(this.screen.tabListPosition));
-        } else {
-            this.screen = new CategorySettingsScreen(this.category, this.category, this.screen.tabListPosition);
-            MinecraftClient.getInstance().setScreen(this.screen);
-        }
+        MinecraftClient.getInstance().setScreen(
+                this.category == this.screen.selected
+                        ? new ModSettingsScreen(this.screen.tabListPosition)
+                        : new CategorySettingsScreen(this.category, this.category, this.screen.tabListPosition)
+        );
     }
 
     @Override

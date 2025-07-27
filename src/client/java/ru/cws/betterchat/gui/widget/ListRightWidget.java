@@ -8,27 +8,29 @@ import ru.cws.betterchat.util.ITabListenScreen;
 
 public abstract class ListRightWidget extends ChatWidget {
     private final ITabListenScreen screen;
-    private final boolean chatSettings;
 
     public ListRightWidget(int x, int y, ITabListenScreen screen, boolean chatSettings, int width) {
         super(x, y, width, 20, Text.of("[▶]"), Text.of("Просмотр следующих категорий"));
         this.screen = screen;
-        this.chatSettings = chatSettings;
         this.flexRender.setBaseColor(chatSettings ? 0x60606060 : 0x60101060);
         this.flexRender.setHoverColor(0x606060FF);
     }
 
     public static ListRightWidget create(int x, int y, ITabListenScreen screen, boolean chatSettings) {
-//        return BetterChatMod.NO_HEAVY_TEXTURES ? new Texted(screen, chatSettings) : new Textured(screen, chatSettings);
+//        return BetterChatMod.NO_HEAVY_TEXTURES ? new Texted(x, y, screen, chatSettings) : new Textured(x, y, screen, chatSettings);
         return new Texted(x, y, screen, chatSettings); // Стрелки стрёмные были
     }
 
     @Override
     public void onPress() {
-        var pos = this.screen.BetterChat$getTabListPosition();
-        if (pos < this.screen.BetterChat$getTabListMaxPosition()) {
-            this.screen.BetterChat$setTabListPosition(pos + 1);
-            this.screen.BetterCombat$recalcTabsList();
+        onPress(this.screen);
+    }
+
+    public static void onPress(ITabListenScreen screen) {
+        var pos = screen.BetterChat$getTabListPosition();
+        if (pos < screen.BetterChat$getTabListMaxPosition()) {
+            screen.BetterChat$setTabListPosition(pos + 1);
+            screen.BetterChat$recalcTabsList();
         }
     }
 

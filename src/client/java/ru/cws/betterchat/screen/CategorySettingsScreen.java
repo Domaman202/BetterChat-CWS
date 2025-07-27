@@ -6,10 +6,7 @@ import net.minecraft.util.Colors;
 import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.category.ChatCategory;
 import ru.cws.betterchat.gui.widget.*;
-import ru.cws.betterchat.gui.widget.settings.category.AllChatVanillaSettingsWidget;
-import ru.cws.betterchat.gui.widget.settings.category.DeleteCategoryWidget;
-import ru.cws.betterchat.gui.widget.settings.category.ReplacePatternSettingsWidget;
-import ru.cws.betterchat.gui.widget.settings.category.ShowInCommonSettingsWidget;
+import ru.cws.betterchat.gui.widget.settings.category.*;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -24,20 +21,20 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
     }
 
     @Override
-    protected void init() {
-        super.init();
-        //
-        addTextField(
+    public void BetterChat$recalcTabsList() {
+        super.BetterChat$recalcTabsList();
+        // Общие настройки
+        this.addTextField(
                 this.category.name,
                 "Название категории",
                 this::emptyToText,
                 it -> {
                     this.category.name = it;
                     BetterChatMod.autosave();
-                    this.BetterCombat$recalcTabsList();
+                    this.BetterChat$recalcTabsList();
                 }
         );
-        addTextField(
+        this.addTextField(
                 this.category.description,
                 "Описание категории",
                 this::emptyToText,
@@ -46,12 +43,12 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
                     BetterChatMod.autosave();
                 }
         );
-        //
+        // Настройки зависимые от категории
         if (this.category == BetterChatMod.ALL_CATEGORY) {
-            addSettingsWidget(new AllChatVanillaSettingsWidget());
+            this.addSettingsWidget(new AllChatVanillaSettingsWidget());
         } else {
             if (this.category != BetterChatMod.COMMON_CATEGORY) {
-                addTextField(
+                this.addTextField(
                         this.category.command,
                         "Команда (Выполняется при переключении на категорию)",
                         this::emptyToNull,
@@ -61,7 +58,7 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
                         }
                 );
             }
-            addTextField(
+            this.addTextField(
                     this.category.prefix,
                     "Префикс (Добавляется в начале сообщения при его отправке",
                     this::emptyToNull,
@@ -70,7 +67,7 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
                         BetterChatMod.autosave();
                     }
             );
-            addTextField(
+            this.addTextField(
                     this.category.pattern,
                     "Шаблон (Регулярное выражение для фильтрации принимаемых сообщений)",
                     this::emptyToNull,
@@ -79,11 +76,22 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
                         BetterChatMod.autosave();
                     }
             );
+            // Настройки зависимые от категории
             if (this.category != BetterChatMod.COMMON_CATEGORY) {
                 this.addSettingsWidget(new ReplacePatternSettingsWidget(this));
                 this.addSettingsWidget(new ShowInCommonSettingsWidget(this));
                 this.addSettingsWidget(new DeleteCategoryWidget(this));
             }
+            // Стрелки
+            var xc = this.getXC();
+            var y = this.getYC() - 53 + this.settingsOffset;
+            var left = MoveLeftWidget.create(xc - 2 - MoveLeftWidget.width(), y, this);
+            this.addDrawableChild(left);
+            this.widgets.add(left);
+            var right = MoveRightWidget.create(xc + 2, y, this);
+            this.addDrawableChild(right);
+            this.widgets.add(right);
+            this.settingsOffset += 21;
         }
     }
 

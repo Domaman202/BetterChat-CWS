@@ -47,39 +47,8 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
         if (this.category == BetterChatMod.ALL_CATEGORY) {
             this.addSettingsWidget(new AllChatVanillaSettingsWidget());
         } else {
-            if (this.category != BetterChatMod.COMMON_CATEGORY) {
-                this.addTextField(
-                        this.category.command,
-                        "Команда (Выполняется при переключении на категорию)",
-                        this::emptyToNull,
-                        it -> {
-                            this.category.command = it;
-                            BetterChatMod.autosave();
-                        }
-                );
-            }
-            this.addTextField(
-                    this.category.prefix,
-                    "Префикс (Добавляется в начале сообщения при его отправке",
-                    this::emptyToNull,
-                    it -> {
-                        this.category.prefix = it;
-                        BetterChatMod.autosave();
-                    }
-            );
-            this.addTextField(
-                    this.category.pattern,
-                    "Шаблон (Регулярное выражение для фильтрации принимаемых сообщений)",
-                    this::emptyToNull,
-                    it -> {
-                        this.category.pattern = it;
-                        BetterChatMod.autosave();
-                    }
-            );
             // Настройки зависимые от категории
             if (this.category != BetterChatMod.COMMON_CATEGORY) {
-                this.addSettingsWidget(new ReplacePatternSettingsWidget(this));
-                this.addSettingsWidget(new ShowInCommonSettingsWidget(this));
                 this.addSettingsWidget(new DeleteCategoryWidget(this));
             }
             // Стрелки

@@ -1,4 +1,4 @@
-package ru.cws.betterchat.util;
+package ru.cws.betterchat.gui.api;
 
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.ArrayListDeque;

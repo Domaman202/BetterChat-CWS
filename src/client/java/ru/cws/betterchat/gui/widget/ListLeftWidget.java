@@ -4,7 +4,7 @@ import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import ru.cws.betterchat.util.ITabListenScreen;
+import ru.cws.betterchat.gui.api.ITabListenScreen;
 
 public abstract class ListLeftWidget extends ChatWidget {
     private final ITabListenScreen screen;

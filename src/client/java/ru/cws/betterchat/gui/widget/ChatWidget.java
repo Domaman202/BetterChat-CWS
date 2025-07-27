@@ -10,8 +10,8 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
-import ru.cws.betterchat.util.IFlexRender;
-import ru.cws.betterchat.util.ISized;
+import ru.cws.betterchat.gui.api.IFlexRender;
+import ru.cws.betterchat.gui.api.ISized;
 
 import java.util.function.Supplier;
 

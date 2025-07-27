@@ -1,60 +1,32 @@
 package ru.cws.betterchat.category;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.*;
-import ru.cws.betterchat.BetterChatMod;
-
-import java.util.Objects;
+import ru.cws.betterchat.util.CategoryHelper;
 
 public class AllChatCategory extends ChatCategory {
     public AllChatCategory() {
-        super("Все", "Все чаты", null, null, null, false, false);
+        super("Все", "Все чаты");
+    }
+
+    @Override
+    public String formatToSend(String message) {
+        return message;
     }
 
     @Override
     public boolean tryAccept(Text message) {
-        this.tryAcceptMaybeSelected(message, false);
+        this.accept(message);
         return true;
     }
 
     @Override
-    public void tryAcceptSelected(String message) {
-        this.tryAcceptMaybeSelected(literal(getAcceptingContent(message)), true);
+    public void tryAcceptSelf(Text message) {
+        this.accept(Text.literal(CategoryHelper.formatToSend(ChatCategory.textToString(message))));
     }
 
-    private void tryAcceptMaybeSelected(Text message, boolean selected) {
-        if (BetterChatMod.ALL_CHAT_VANILLA) {
-            this.accept(message);
-            return;
-        }
-
-        var content = ChatCategory.getAcceptingContent(ChatCategory.getAcceptingString(message));
-
-        var nonFounded = true;
-        for (var category : BetterChatMod.CATEGORIES) {
-            if (category == BetterChatMod.ALL_CATEGORY)
-                continue;
-            var pattern = selected ? category.prefixPattern() : category.pattern();
-            if (pattern == null)
-                continue;
-            var matcher = pattern.matcher(content.content());
-            if (matcher.find()) {
-                nonFounded = false;
-                var text = new StringBuilder();
-                text.append("§6~ Новое сообщение\n");
-                text.append("§3- Отправитель: §a").append(Objects.requireNonNullElse(content.sender(), "Система")).append("\n");
-                text.append("§3- Категория:   §b ").append(category.name).append("\n");
-                text.append("§3- Содержание:  §c").append(category.replacePattern ? matcher.replaceAll("") : content.content());
-                this.accept(Text.of(text.toString()));
-            }
-        }
-
-        if (nonFounded && !content.content().isEmpty()) {
-            var text = new StringBuilder();
-            text.append("§6~ Новое сообщение\n");
-            text.append("§3- Отправитель: §a").append(Objects.requireNonNullElse(content.sender(), "Система")).append("\n");
-            text.append("§3- Категория:   §b§o Отсутсвует§r\n");
-            text.append("§3- Содержание:  §c").append(content.content());
-            this.accept(Text.of(text.toString()));
-        }
+    @Override
+    public void tryAcceptSelf(String message) {
+        this.accept(Text.literal(CategoryHelper.formatToSend(ChatCategory.createStringMessage("", MinecraftClient.getInstance().player.getGameProfile().getName(), message))));
     }
 }

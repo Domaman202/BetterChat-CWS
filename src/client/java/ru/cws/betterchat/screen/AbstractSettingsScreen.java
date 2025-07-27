@@ -17,8 +17,7 @@ import ru.cws.betterchat.gui.widget.ListRightWidget;
 import ru.cws.betterchat.gui.widget.chat.CategoryWidget;
 import ru.cws.betterchat.gui.widget.settings.AddCategoryWidget;
 import ru.cws.betterchat.gui.widget.settings.CategorySettingsWidget;
-import ru.cws.betterchat.gui.widget.settings.category.AllChatVanillaSettingsWidget;
-import ru.cws.betterchat.util.ITabListenScreen;
+import ru.cws.betterchat.gui.api.ITabListenScreen;
 
 import java.util.ArrayList;
 import java.util.List;

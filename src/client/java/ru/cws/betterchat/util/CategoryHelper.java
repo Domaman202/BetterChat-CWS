@@ -7,23 +7,19 @@ import ru.cws.betterchat.category.ChatCategory;
 public class CategoryHelper {
     public static void tryAcceptToAll(Text message) {
         var selectedToNoDefault = false;
-        for (ChatCategory category : BetterChatMod.CATEGORIES) {
-            if (category.tryAccept(message) && category != BetterChatMod.ALL_CATEGORY && category != BetterChatMod.COMMON_CATEGORY) {
+        for (ChatCategory category : BetterChatMod.CATEGORIES)
+            if (category.tryAccept(message) && category != BetterChatMod.ALL_CATEGORY)
                selectedToNoDefault = true;
-            }
-        }
         if (!selectedToNoDefault)
             BetterChatMod.COMMON_CATEGORY.accept(message);
         BetterChatMod.SELECTED_CATEGORY.refreshMessages();
     }
 
-    public static void tryAcceptSelectedToAll(String player, String message) {
+    public static void tryAcceptSelfToAll(String player, String message) {
         var formatted = "<" + player + "> " + message;
         var literal = Text.literal(formatted);
         for (ChatCategory category : BetterChatMod.CATEGORIES)
-            if (category != BetterChatMod.SELECTED_CATEGORY)
-                category.tryAccept(literal);
-        BetterChatMod.SELECTED_CATEGORY.tryAcceptSelected(formatted);
+                category.tryAcceptSelf(literal);
         BetterChatMod.SELECTED_CATEGORY.refreshMessages();
     }
 

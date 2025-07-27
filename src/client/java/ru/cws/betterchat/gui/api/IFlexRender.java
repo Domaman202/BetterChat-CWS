@@ -1,7 +1,9 @@
-package ru.cws.betterchat.util;
+package ru.cws.betterchat.gui.api;
 
 import net.minecraft.client.gui.DrawContext;
 import ru.cws.betterchat.BetterChatMod;
+import ru.cws.betterchat.gui.FlexRender;
+import ru.cws.betterchat.gui.NoFlexRender;
 
 public interface IFlexRender {
     void setBaseColor(int baseColor);

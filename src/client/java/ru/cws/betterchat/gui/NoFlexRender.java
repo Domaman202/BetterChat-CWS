@@ -1,6 +1,8 @@
-package ru.cws.betterchat.util;
+package ru.cws.betterchat.gui;
 
 import net.minecraft.client.gui.DrawContext;
+import ru.cws.betterchat.gui.api.IFlexRender;
+import ru.cws.betterchat.gui.api.ISized;
 
 public class NoFlexRender implements IFlexRender {
     // Цвета (ARGB формат)

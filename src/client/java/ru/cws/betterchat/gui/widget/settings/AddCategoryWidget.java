@@ -5,7 +5,7 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import ru.cws.betterchat.BetterChatMod;
-import ru.cws.betterchat.category.ChatCategory;
+import ru.cws.betterchat.category.GroovyBindChatCategory;
 import ru.cws.betterchat.gui.widget.ChatWidget;
 import ru.cws.betterchat.screen.AbstractSettingsScreen;
 import ru.cws.betterchat.screen.CategorySettingsScreen;
@@ -22,7 +22,7 @@ public class AddCategoryWidget extends ChatWidget {
 
     @Override
     public void onPress() {
-        var category = new ChatCategory("Новая категория", "Описание новой категории", null, null, null, true, true);
+        var category = new GroovyBindChatCategory("Новая категория", "Описание новой категории");
         BetterChatMod.CATEGORIES.add(category);
         BetterChatMod.autosave();
         MinecraftClient.getInstance().setScreen(new CategorySettingsScreen(category, category, this.screen.BetterChat$getTabListMaxPosition()));

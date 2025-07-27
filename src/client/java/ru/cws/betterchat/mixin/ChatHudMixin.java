@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.util.CategoryHelper;
-import ru.cws.betterchat.util.IChatHud;
+import ru.cws.betterchat.gui.api.IChatHud;
 
 import java.util.List;
 

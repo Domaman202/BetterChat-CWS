@@ -15,7 +15,7 @@ public class ClientPlayNetworkHandlerMixin {
 
     @ModifyVariable(method = "sendChatMessage", at = @At("HEAD"), argsOnly = true)
     public String sendChatMessage(String content) {
-        CategoryHelper.tryAcceptSelectedToAll(this.profile.getName(), content);
+        CategoryHelper.tryAcceptSelfToAll(this.profile.getName(), content);
         return CategoryHelper.formatToSend(content);
     }
 }

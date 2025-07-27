@@ -4,6 +4,7 @@ import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.category.AllChatCategory;
 import ru.cws.betterchat.category.ChatCategory;
 import ru.cws.betterchat.category.CommonChatCategory;
+import ru.cws.betterchat.category.GroovyBindChatCategory;
 
 import java.util.List;
 
@@ -45,23 +46,13 @@ public record ConfigHelper(
     public record CategoryHelper(
             String special,
             String name,
-            String description,
-            String command,
-            String prefix,
-            String pattern,
-            boolean pattern_replace,
-            boolean show_in_common
+            String description
     ) {
         public static CategoryHelper fromCategory(ChatCategory category) {
             return new CategoryHelper(
                     category == BetterChatMod.ALL_CATEGORY ? "all" : category == BetterChatMod.COMMON_CATEGORY ? "common" : null,
                     category.name,
-                    category.description,
-                    category.command,
-                    category.prefix,
-                    category.pattern,
-                    category.replacePattern,
-                    category.showInCommon
+                    category.description
             );
         }
 
@@ -77,14 +68,9 @@ public record ConfigHelper(
                     BetterChatMod.COMMON_CATEGORY = category;
                     yield category;
                 }
-                case null, default -> new ChatCategory(
+                case null, default -> new GroovyBindChatCategory(
                         this.name,
-                        this.description,
-                        this.command,
-                        this.prefix,
-                        this.pattern,
-                        this.pattern_replace,
-                        this.show_in_common
+                        this.description
                 );
             };
         }

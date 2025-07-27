@@ -98,32 +98,31 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
             BetterChatMod.SELECTED_CATEGORY = BetterChatMod.COMMON_CATEGORY;
         }
         // -- Добавляем вкладки -- //
-        // Сохраняем сдвиг
-        var offsetSave = offset;
         // Добавляем вкладки
+        var freeSpace = this.width - offset;
         for (int i = 0; i < BetterChatMod.CATEGORIES.size() - this.BetterChat$tabListPosition; i++) {
             var category = BetterChatMod.CATEGORIES.get(this.BetterChat$tabListPosition + i);
             if (category == BetterChatMod.ALL_CATEGORY)
                 continue;
-            if (this.width - (offset + CategoryWidget.getWidth(category)) < 0)
+            var width = CategoryWidget.getWidth(category);
+            if (freeSpace - width <= 1)
                 break;
-            var tab = new CategoryWidget(offset, y, category);
+            var tab = new CategoryWidget(0, y, category);
             this.BetterChat$tabs.add(tab);
             tab.updateActive();
             this.addDrawableChild(tab);
-            offset += tab.getWidth() + 1;
+            freeSpace -= width + 1;
         }
         // Расширяем вкладки с конца
         cycle: for (var reverse = this.BetterChat$tabs.reversed();;) {
             for (var tab : reverse) {
-                if (this.width - offset < 3)
+                if (freeSpace <= 1)
                     break cycle;
                 tab.setWidth(tab.getWidth() + 1);
-                offset++;
+                freeSpace--;
             }
         }
         // Выполняем перерасчёт
-        offset = offsetSave;
         for (var tab : this.BetterChat$tabs) {
             tab.setX(offset);
             offset += tab.getWidth() + 1;

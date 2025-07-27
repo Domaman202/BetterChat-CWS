@@ -15,6 +15,7 @@ import ru.cws.betterchat.category.ChatCategory;
 import ru.cws.betterchat.gui.widget.ChatWidget;
 import ru.cws.betterchat.gui.widget.ListLeftWidget;
 import ru.cws.betterchat.gui.widget.ListRightWidget;
+import ru.cws.betterchat.gui.widget.chat.CategoryWidget;
 import ru.cws.betterchat.gui.widget.settings.AddCategoryWidget;
 import ru.cws.betterchat.gui.widget.settings.CategorySettingsWidget;
 import ru.cws.betterchat.util.ITabListenScreen;
@@ -76,31 +77,30 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
         this.addDrawableChild(addCategory);
         offset += addCategory.getWidth() + 1;
         // -- Добавляем вкладки -- //
-        // Сохраняем сдвиг
-        var offsetSave = offset;
         // Добавляем вкладки
+        var freeSpace = this.getXE() - offset;
         for (int i = 0; i < BetterChatMod.CATEGORIES.size() - this.tabListPosition; i++) {
             var category = BetterChatMod.CATEGORIES.get(this.tabListPosition + i);
             if (category == BetterChatMod.ALL_CATEGORY)
                 continue;
-            if (this.getXE() - (offset + CategorySettingsWidget.getWidth(category)) < 0)
+            var width = CategoryWidget.getWidth(category);
+            if (freeSpace - width < 0)
                 break;
-            var tab = new CategorySettingsWidget(offset, y, category, this);
+            var tab = new CategorySettingsWidget(0, y, category, this);
             this.tabs.add(tab);
             this.addDrawableChild(tab);
-            offset += tab.getWidth() + 1;
+            freeSpace -= width + 1;
         }
         // Расширяем вкладки с конца
         cycle: for (var reverse = this.tabs.reversed();;) {
             for (var tab : reverse) {
-                if (this.getXE() - offset < 0)
+                if (freeSpace < 0)
                     break cycle;
                 tab.setWidth(tab.getWidth() + 1);
-                offset++;
+                freeSpace--;
             }
         }
         // Выполняем перерасчёт
-        offset = offsetSave;
         for (var tab : this.tabs) {
             tab.setX(offset);
             offset += tab.getWidth() + 1;

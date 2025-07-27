@@ -15,8 +15,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import ru.cws.betterchat.BetterChatMod;
-import ru.cws.betterchat.category.ChatCategory;
 import ru.cws.betterchat.util.CategoryHelper;
 
 import java.time.Instant;
@@ -29,7 +27,7 @@ public class MessageHandlerMixin {
      */
     @Overwrite
     public void onGameMessage(Text message, boolean overlay) {
-        // todo:
+        CategoryHelper.tryAcceptToAll(message);
     }
 
     @Inject(method = "processChatMessageInternal", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V"))

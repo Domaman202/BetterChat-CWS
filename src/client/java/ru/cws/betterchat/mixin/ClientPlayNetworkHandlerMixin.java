@@ -1,6 +1,7 @@
 package ru.cws.betterchat.mixin;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +16,8 @@ public class ClientPlayNetworkHandlerMixin {
 
     @ModifyVariable(method = "sendChatMessage", at = @At("HEAD"), argsOnly = true)
     public String sendChatMessage(String content) {
-        CategoryHelper.tryAcceptSelfToAll(this.profile.getName(), content);
+        if (MinecraftClient.getInstance().isIntegratedServerRunning())
+            CategoryHelper.tryAcceptSelfToAll(this.profile.getName(), content);
         return CategoryHelper.formatToSend(content);
     }
 }

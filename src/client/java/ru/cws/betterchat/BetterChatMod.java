@@ -72,10 +72,6 @@ public class BetterChatMod implements ClientModInitializer {
         }
 
         load();
-
-        if (!new File(CONFIG_FILE).exists()) {
-            save();
-        }
     }
 
     public static void autosave() {
@@ -120,6 +116,8 @@ public class BetterChatMod implements ClientModInitializer {
                 LOGGER.trace("Failed to read config file", e);
             else throw new RuntimeException(e);
         }
+
+        save();
     }
 
     public static void tryCommand(String command) {

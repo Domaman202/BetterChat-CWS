@@ -88,7 +88,6 @@ public class GroovyAdapter {
         return BetterChatMod.CATEGORIES.stream().filter(it -> it.name.equals(name)).findFirst().orElseGet(() -> {
             var category = new GroovyBindChatCategory(id, name, description);
             BetterChatMod.CATEGORIES.add(category);
-            BetterChatMod.autosave();
             return category;
         });
     }

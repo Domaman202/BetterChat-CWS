@@ -6,9 +6,9 @@ import java.util.regex.Pattern
 static void main(GroovyAdapter adapter) {
     var parser = getCWSParser()
     configCommonCategory(adapter, parser)
-    createSimpleCategory(adapter, parser, "group", "Группа", "Чат группы", null, "@", Pattern.compile("^\\[party]"))
-    createSimpleCategory(adapter, parser, "guild", "Гильдия", "Чат поселения", "tc", null, Pattern.compile("^\\[TC]"))
-    createSimpleCategory(adapter, parser, "nation", "Альянс", "Чат нации", "nc", null, Pattern.compile("^\\[NC]"))
+    createSimpleCategory(adapter, parser, "group", "Группа", "Чат группы", null, "@", Pattern.compile("^(§.)*\\[(§.)*party(§.)*]"))
+    createSimpleCategory(adapter, parser, "guild", "Гильдия", "Чат поселения", "tc", null, Pattern.compile("^(§.)*\\[(§.)*TC(§.)*]"))
+    createSimpleCategory(adapter, parser, "nation", "Альянс", "Чат нации", "nc", null, Pattern.compile("^(§.)*\\[(§.)*NC(§.)*]"))
     // Самой лучшей подруге на свете посвящается <3
     configBestCategory(adapter, parser)
 }
@@ -21,7 +21,7 @@ static Function<String, Tuple3<String, String, String>> getCWSParser() {
             return new Tuple3<String, String, String>("", null, message)
         var prefix = message.substring(0, j)
         var sender = message.substring(j + 1, i)
-        var content = message.substring(i + 2)
+        var content = message.substring(i + 1)
         return new Tuple3<String, String, String>(prefix, sender, content)
     }
 }
@@ -32,8 +32,8 @@ static void configCommonCategory(GroovyAdapter adapter, Function<String, Tuple3<
     adapter.setCategoryOnOpen(category, { adapter.executeCommand(BetterChatMod.GLOBAL_LOCAL ? "g" : "lc") })
     adapter.setCategoryFormatToSend(category, (String message) -> message)
 
-    var localPrefixPattern = Pattern.compile("^\\[local]\\s*")
-    var globalPrefixPattern = Pattern.compile("^\\[g]\\s*")
+    var localPrefixPattern = Pattern.compile("^(§.)*\\[(§.)*local(§.)*]")
+    var globalPrefixPattern = Pattern.compile("^(§.)*\\[(§.)*g(§.)*]")
     adapter.setCategoryTryAccept(category, (String message, String messageFmt, boolean self) -> {
         String content
         var localMatcher = localPrefixPattern.matcher(message)
@@ -71,13 +71,12 @@ static createSimpleCategory(
     adapter.setCategoryFormatToSend(category, prefix == null ? (String message) -> message : (String message) -> prefix + " " + message)
 
     adapter.setCategoryTryAccept(category, (String message, String messageFmt, boolean self) -> {
-        var matcher = pattern.matcher(message)
+        var matcher = pattern.matcher(messageFmt)
         if (matcher.find()) {
             if (BetterChatMod.CATEGORY_FORMATTING) {
-                var content = parser.apply(message)
-                var text = matcher.replaceAll("")
-                adapter.categoryAccept(category, adapter.createMessage(content.v1, content.v2, text))
-                adapter.commonCategoryAccept(category, content.v1, content.v2, text)
+                var content = parser.apply(messageFmt)
+                adapter.categoryAccept(category, adapter.createMessage(content.v1, content.v2, content.v3))
+                adapter.commonCategoryAccept(category, content.v1, content.v2, content.v3)
             } else {
                 adapter.categoryAccept(category, adapter.createLiteral(messageFmt))
                 adapter.commonCategoryAcceptNoFmt(messageFmt)
@@ -96,9 +95,13 @@ static configBestCategory(GroovyAdapter adapter, Function<String, Tuple3<String,
 
     var filterPattern = Pattern.compile("((Ек|К)ат(е((чк(а|е|ой|у|и))|(ньк(а|е|ой|у|и))|(рин(а|е|ка|ой|у|ы)?)|й)?|и|ь|ю(ня|(х([аеиу])|(ш(а|ей?|у|и)?))?)?|я)|(([Мм])аков ([Цц])вет))")
     adapter.setCategoryTryAccept(category, (String message, String messageFmt, boolean self) -> {
-        var content = parser.apply(message)
-        if (filterPattern.matcher(content.v3).find()) {
-            adapter.categoryAccept(category, adapter.createMessage(content.v1, content.v2, content.v3))
+        if (filterPattern.matcher(messageFmt.replaceAll("(§.)*", "")).find()) {
+            if (BetterChatMod.CATEGORY_FORMATTING) {
+                var content = parser.apply(message)
+                adapter.categoryAccept(category, adapter.createMessage(content.v1, content.v2, content.v3))
+            } else {
+                adapter.categoryAccept(category, adapter.createLiteral(messageFmt))
+            }
             return true
         }
         return false

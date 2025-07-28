@@ -31,13 +31,17 @@ public class BetterChatMod implements ClientModInitializer {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final int SETTINGS_VIEW_TAB_SIZE = 80;
     public static final int CHAT_VIEW_TAB_SIZE = 80;
+    //
     public static List<ChatCategory> CATEGORIES = new ArrayList<>();
     public static ChatCategory SELECTED_CATEGORY;
     public static CommonChatCategory COMMON_CATEGORY;
     public static AllChatCategory ALL_CATEGORY;
     public static IChatScreen CHAT_SCREEN = null;
+    //
     public static boolean ALL_CHAT_VANILLA = true;
+    public static boolean CATEGORY_FORMATTING = false;
     public static boolean GLOBAL_LOCAL = true;
+    public static String LOCAL_CHAT_PREFIX = "§r§7§l[§r§4Пукнул рядом§r§7§l] §r§f§o";
     public static boolean FIXED_TAB_SIZE = true;
     public static boolean NO_FLEX = false;
     public static boolean NO_HEAVY_TEXTURES = false;
@@ -72,10 +76,6 @@ public class BetterChatMod implements ClientModInitializer {
         }
 
         load();
-
-        if (!new File(CONFIG_FILE).exists()) {
-            save();
-        }
     }
 
     public static void autosave() {
@@ -113,13 +113,17 @@ public class BetterChatMod implements ClientModInitializer {
             else throw new RuntimeException(e);
         }
 
-        try {
-            GSON.fromJson(Files.readString(Path.of(CONFIG_FILE)), ConfigHelper.class).toMod();
-        } catch (IOException e) {
-            if (BetterChatMod.NO_THROW)
-                LOGGER.trace("Failed to read config file", e);
-            else throw new RuntimeException(e);
+        if (new File(CONFIG_FILE).exists()) {
+            try {
+                GSON.fromJson(Files.readString(Path.of(CONFIG_FILE)), ConfigHelper.class).toMod();
+            } catch (IOException e) {
+                if (BetterChatMod.NO_THROW)
+                    LOGGER.trace("Failed to read config file", e);
+                else throw new RuntimeException(e);
+            }
         }
+
+        save();
     }
 
     public static void tryCommand(String command) {

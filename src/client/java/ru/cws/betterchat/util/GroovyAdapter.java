@@ -16,6 +16,10 @@ public class GroovyAdapter {
         BetterChatMod.COMMON_CATEGORY.acceptFromOther(other, prefix, sender, content);
     }
 
+    public void commonCategoryAcceptNoFmt(String message) {
+        BetterChatMod.COMMON_CATEGORY.acceptFromOther(message);
+    }
+
     public String getCategoryID(ChatCategory category) {
         return category.id;
     }
@@ -68,12 +72,12 @@ public class GroovyAdapter {
         return BetterChatMod.CATEGORIES;
     }
 
-    public ChatCategory getSelectedCategory() {
-        return BetterChatMod.SELECTED_CATEGORY;
-    }
-
     public void setSelectedCategory(ChatCategory category) {
         BetterChatMod.SELECTED_CATEGORY = category;
+    }
+
+    public ChatCategory getSelectedCategory() {
+        return BetterChatMod.SELECTED_CATEGORY;
     }
 
     public ChatCategory getCommonCategory() {
@@ -88,7 +92,6 @@ public class GroovyAdapter {
         return BetterChatMod.CATEGORIES.stream().filter(it -> it.name.equals(name)).findFirst().orElseGet(() -> {
             var category = new GroovyBindChatCategory(id, name, description);
             BetterChatMod.CATEGORIES.add(category);
-            BetterChatMod.autosave();
             return category;
         });
     }
@@ -103,6 +106,10 @@ public class GroovyAdapter {
 
     public Text createMessage(String prefix, String sender, String content) {
         return ChatCategory.createMessage(prefix, sender, content);
+    }
+
+    public Text createLiteral(String message) {
+        return Text.literal(message);
     }
 
     public void executeCommand(String command) {

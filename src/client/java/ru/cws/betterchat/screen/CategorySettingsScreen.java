@@ -54,8 +54,19 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
         );
         // Настройки зависимые от категории
         if (this.category == BetterChatMod.ALL_CATEGORY) {
-            this.addSettingsWidget(new AllChatVanillaSettingsWidget());
+            this.addSettingsWidget(new VanillaSettingsWidget());
         } else {
+            // Настройки зависимые от категории
+            if (this.category == BetterChatMod.COMMON_CATEGORY) {
+                this.addTextField(
+                        BetterChatMod.LOCAL_CHAT_PREFIX,
+                        "Префикс локального чата",
+                        () -> "",
+                        it -> BetterChatMod.LOCAL_CHAT_PREFIX = it,
+                        true
+                );
+                this.addSettingsWidget(new CategoryFormattingSettingsWidget());
+            }
             // Стрелки
             var xc = this.getXC();
             var y = this.getYC() - 53 + this.settingsOffset;

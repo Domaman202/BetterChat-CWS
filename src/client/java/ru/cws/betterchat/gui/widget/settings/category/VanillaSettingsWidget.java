@@ -4,8 +4,8 @@ import net.minecraft.text.Text;
 import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.gui.widget.ChatWidget;
 
-public class AllChatVanillaSettingsWidget extends ChatWidget {
-    public AllChatVanillaSettingsWidget() {
+public class VanillaSettingsWidget extends ChatWidget {
+    public VanillaSettingsWidget() {
         super(0, 0, 200, 20, null, Text.of("Переключение режима ванильного чата"));
         this.update();
     }

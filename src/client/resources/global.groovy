@@ -1,46 +1,91 @@
+import ru.cws.betterchat.BetterChatMod
 import ru.cws.betterchat.util.GroovyAdapter
 import java.util.function.Function
 import java.util.regex.Pattern
 
 static void main(GroovyAdapter adapter) {
-    var parser = getVanillaParser()
+    var parser = getCWSParser()
     configCommonCategory(adapter, parser)
-    configPrefixCategory(adapter, parser, "trade", "Торговый", "Игровой чат для покупки и продажи ресурсов", "[:trade:]", true, true)
-    configPrefixCategory(adapter, parser, "support", "Поддержка", "Игровой чат для технической поддержки", "[:support:]", true, false)
+    createSimpleCategory(adapter, parser, "group", "Группа", "Чат группы", null, "@", Pattern.compile("^\\[party]"))
+    createSimpleCategory(adapter, parser, "guild", "Гильдия", "Чат поселения", "tc", null, Pattern.compile("^\\[TC]"))
+    createSimpleCategory(adapter, parser, "nation", "Альянс", "Чат нации", "nc", null, Pattern.compile("^\\[NC]"))
     // Самой лучшей подруге на свете посвящается <3
     configBestCategory(adapter, parser)
 }
 
-static Function<String, Tuple3<String, String, String>> getVanillaParser() {
-    var vanillaSenderPattern = Pattern.compile("<[a-zA-Z0-9_]{3,16}> ")
+static Function<String, Tuple3<String, String, String>> getCWSParser() {
     return (String message) -> {
-        var matcher = vanillaSenderPattern.matcher(message)
-        if (matcher.find()) {
-            var sender = matcher.group(0)
-            return new Tuple3("", sender.substring(1, sender.length() - 2), matcher.replaceAll(""))
-        }
-        return new Tuple3("", null, message)
+        var i = message.indexOf(':')
+        var j = message.lastIndexOf(' ', i)
+        if (i == -1 || j == -1)
+            return new Tuple3<String, String, String>("", null, message)
+        var prefix = message.substring(0, j)
+        var sender = message.substring(j + 1, i)
+        var content = message.substring(i + 2)
+        return new Tuple3<String, String, String>(prefix, sender, content)
     }
 }
 
 static void configCommonCategory(GroovyAdapter adapter, Function<String, Tuple3<String, String, String>> parser) {
     var category = adapter.getCategory("common")
 
-    adapter.setCategoryOnOpen(category, { })
-    adapter.setCategoryFormatToSend(category, (String message) -> "[:common:]" + message)
+    adapter.setCategoryOnOpen(category, { adapter.executeCommand(BetterChatMod.GLOBAL_LOCAL ? "g" : "lc") })
+    adapter.setCategoryFormatToSend(category, (String message) -> message)
 
-    var prefixPattern = Pattern.compile(Pattern.quote("[:common:]"))
-    adapter.setCategoryTryAccept(category, (String message, boolean self) -> {
-        var content = parser.apply(message)
-        if (category != adapter.getSelectedCategory() || !(self || content.v1 == adapter.getPlayerName())) {
-            var matcher = prefixPattern.matcher(content.v3)
-            if (matcher.find())
-                content = new Tuple3<String, String, String>(content.v1, content.v2, matcher.replaceAll(""))
+    var localPrefixPattern = Pattern.compile("^\\[local]\\s*")
+    var globalPrefixPattern = Pattern.compile("^\\[g]\\s*")
+    adapter.setCategoryTryAccept(category, (String message, String messageFmt, boolean self) -> {
+        String content
+        var localMatcher = localPrefixPattern.matcher(message)
+        var globalMatcher = globalPrefixPattern.matcher(message)
+        if (BetterChatMod.CATEGORY_FORMATTING) {
+            if (localMatcher.find())
+                content = localMatcher.replaceFirst(BetterChatMod.LOCAL_CHAT_PREFIX)
+            else if (globalMatcher.find())
+                content = globalMatcher.replaceFirst("")
+            else return false
+            var parsed = parser.apply(content)
+            adapter.commonCategoryAccept(category, parsed.v1, parsed.v2, parsed.v3)
+        } else {
+            if (localMatcher.find() || globalMatcher.find())
+                adapter.commonCategoryAcceptNoFmt(messageFmt)
             else return false
         }
-        adapter.commonCategoryAccept(category, content.v1, content.v2, content.v3)
         return true
     })
+}
+
+static createSimpleCategory(
+        GroovyAdapter adapter,
+        Function<String, Tuple3<String, String, String>> parser,
+        String id,
+        String name,
+        String description,
+        String command,
+        String prefix,
+        Pattern pattern
+) {
+    var category = adapter.getOrCreateCategory(id, name, description)
+
+    adapter.setCategoryOnOpen(category, command == null ? { } : { adapter.executeCommand(command) })
+    adapter.setCategoryFormatToSend(category, prefix == null ? (String message) -> message : (String message) -> prefix + " " + message)
+
+    adapter.setCategoryTryAccept(category, (String message, String messageFmt, boolean self) -> {
+        var matcher = pattern.matcher(message)
+        if (matcher.find()) {
+            if (BetterChatMod.CATEGORY_FORMATTING) {
+                var content = parser.apply(message)
+                var text = matcher.replaceAll("")
+                adapter.categoryAccept(category, adapter.createMessage(content.v1, content.v2, text))
+                adapter.commonCategoryAccept(category, content.v1, content.v2, text)
+            } else {
+                adapter.categoryAccept(category, adapter.createLiteral(messageFmt))
+                adapter.commonCategoryAcceptNoFmt(messageFmt)
+            }
+            return true
+        }
+        return false
+    });
 }
 
 static configBestCategory(GroovyAdapter adapter, Function<String, Tuple3<String, String, String>> parser) {
@@ -50,51 +95,12 @@ static configBestCategory(GroovyAdapter adapter, Function<String, Tuple3<String,
     adapter.setCategoryFormatToSend(category, (String message) -> message)
 
     var filterPattern = Pattern.compile("((Ек|К)ат(е((чк(а|е|ой|у|и))|(ньк(а|е|ой|у|и))|(рин(а|е|ка|ой|у|ы)?)|й)?|и|ь|ю(ня|(х([аеиу])|(ш(а|ей?|у|и)?))?)?|я)|(([Мм])аков ([Цц])вет))")
-    adapter.setCategoryTryAccept(category, (String message, boolean self) -> {
+    adapter.setCategoryTryAccept(category, (String message, String messageFmt, boolean self) -> {
         var content = parser.apply(message)
         if (filterPattern.matcher(content.v3).find()) {
             adapter.categoryAccept(category, adapter.createMessage(content.v1, content.v2, content.v3))
             return true
         }
         return false
-    })
-}
-
-static void configPrefixCategory(
-        GroovyAdapter adapter,
-        Function<String, Tuple3<String, String, String>> parser,
-        String id,
-        String name,
-        String description,
-        String prefix,
-        boolean replacePrefix,
-        boolean sendToCommon
-) {
-    var category = adapter.getOrCreateCategory(id, name, description)
-
-    adapter.setCategoryOnOpen(category, { })
-    adapter.setCategoryFormatToSend(category, (String message) -> prefix + message)
-
-    var prefixPattern = Pattern.compile(Pattern.quote(prefix))
-    adapter.setCategoryTryAccept(category, (String message, boolean self) -> {
-        var content = parser.apply(message)
-        var accepting = null
-
-        if (category == adapter.getSelectedCategory() && (self || content.v1 == adapter.getPlayerName())) {
-            accepting = adapter.createMessage(content.v1, content.v2, content.v3)
-        } else {
-            var matcher = prefixPattern.matcher(content.v3)
-            if (matcher.find()) {
-                content = new Tuple3<String, String, String>(content.v1, content.v2, replacePrefix ? matcher.replaceAll("") : content.v3)
-                accepting = adapter.createMessage(content.v1, content.v2, content.v3)
-            }
-        }
-
-        if (accepting == null)
-            return false
-        adapter.categoryAccept(category, accepting)
-        if (sendToCommon)
-            adapter.commonCategoryAccept(category, content.v1, content.v2, content.v3)
-        return true
     })
 }

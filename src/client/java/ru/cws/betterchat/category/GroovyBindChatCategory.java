@@ -26,16 +26,16 @@ public class GroovyBindChatCategory extends ChatCategory {
 
     @Override
     public boolean tryAccept(Text message) {
-        return this.tryAccept.call(ChatCategory.textToString(message), false);
+        return this.tryAccept.call(ChatCategory.textToString(message), ChatCategory.textToFormattedeString(message), false);
     }
 
     @Override
     public void tryAcceptSelf(Text message) {
-        this.tryAccept.call(ChatCategory.textToString(message), true);
+        this.tryAccept.call(ChatCategory.textToString(message), ChatCategory.textToFormattedeString(message), true);
     }
 
     @Override
     public void tryAcceptSelf(String message) {
-        this.tryAccept.call(ChatCategory.createStringMessage("", MinecraftClient.getInstance().player.getGameProfile().getName(), message), true);
+        this.tryAccept.call(ChatCategory.createStringMessage("", MinecraftClient.getInstance().player.getGameProfile().getName(), message), message, true);
     }
 }

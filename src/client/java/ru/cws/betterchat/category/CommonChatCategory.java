@@ -4,7 +4,7 @@ import net.minecraft.text.Text;
 
 public class CommonChatCategory extends GroovyBindChatCategory {
     public CommonChatCategory() {
-        super("Общий", "Общий чат");
+        super("common", "Общий", "Общий чат");
     }
 
     public void acceptFromOther(ChatCategory other, String prefix, String sender, String content) {

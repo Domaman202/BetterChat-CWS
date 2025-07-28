@@ -1,10 +1,7 @@
 package ru.cws.betterchat.util;
 
 import ru.cws.betterchat.BetterChatMod;
-import ru.cws.betterchat.category.AllChatCategory;
 import ru.cws.betterchat.category.ChatCategory;
-import ru.cws.betterchat.category.CommonChatCategory;
-import ru.cws.betterchat.category.GroovyBindChatCategory;
 
 import java.util.List;
 
@@ -39,40 +36,27 @@ public record ConfigHelper(
         BetterChatMod.NO_HEAVY_TEXTURES = this.no_heave_textures;
         BetterChatMod.NO_THROW = this.no_throw;
         BetterChatMod.AUTOSAVE = this.autosave;
-        BetterChatMod.CATEGORIES.clear();
-        this.categories.stream().map(CategoryHelper::toCategory).forEach(BetterChatMod.CATEGORIES::add);
+        this.categories.forEach(CategoryHelper::toCategory);
     }
 
     public record CategoryHelper(
-            String special,
+            String id,
             String name,
             String description
     ) {
         public static CategoryHelper fromCategory(ChatCategory category) {
             return new CategoryHelper(
-                    category == BetterChatMod.ALL_CATEGORY ? "all" : category == BetterChatMod.COMMON_CATEGORY ? "common" : null,
+                    category.id,
                     category.name,
                     category.description
             );
         }
 
-        public ChatCategory toCategory() {
-            return switch (this.special) {
-                case "all" -> {
-                    var category = new AllChatCategory();
-                    BetterChatMod.ALL_CATEGORY = category;
-                    yield category;
-                }
-                case "common" -> {
-                    var category = new CommonChatCategory();
-                    BetterChatMod.COMMON_CATEGORY = category;
-                    yield category;
-                }
-                case null, default -> new GroovyBindChatCategory(
-                        this.name,
-                        this.description
-                );
-            };
+        public void toCategory() {
+            BetterChatMod.CATEGORIES.stream().filter(it -> it.id.equals(this.id)).findFirst().ifPresent(it -> {
+                it.name = this.name;
+                it.description = this.description;
+            });
         }
     }
 }

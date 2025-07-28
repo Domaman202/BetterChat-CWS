@@ -84,10 +84,6 @@ public class GroovyAdapter {
         return BetterChatMod.COMMON_CATEGORY;
     }
 
-    public ChatCategory getAllCategory() {
-        return BetterChatMod.ALL_CATEGORY;
-    }
-
     public ChatCategory getOrCreateCategory(String id, String name, String description) {
         return BetterChatMod.CATEGORIES.stream().filter(it -> it.name.equals(name)).findFirst().orElseGet(() -> {
             var category = new GroovyBindChatCategory(id, name, description);

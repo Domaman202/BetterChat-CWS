@@ -17,7 +17,6 @@ import ru.cws.betterchat.BetterChatMod;
 import ru.cws.betterchat.gui.widget.ChatWidget;
 import ru.cws.betterchat.gui.widget.ListLeftWidget;
 import ru.cws.betterchat.gui.widget.ListRightWidget;
-import ru.cws.betterchat.gui.widget.chat.AllCategoryWidget;
 import ru.cws.betterchat.gui.widget.chat.CategoryWidget;
 import ru.cws.betterchat.gui.widget.chat.GlobalLocalWidget;
 import ru.cws.betterchat.gui.widget.chat.SettingsWidget;
@@ -77,10 +76,6 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
         this.BetterChat$widgets.add(settings);
         this.addDrawableChild(settings);
         offset += settings.getWidth() + 1;
-        var allCategory = AllCategoryWidget.create(offset, y);
-//        this.BetterChat$tabs.add(allCategory); // До перерасчёта не трогаем
-        this.addDrawableChild(allCategory);
-        offset += allCategory.getWidth() + 1;
         var globalLocal = GlobalLocalWidget.create(offset, y);
         this.BetterChat$widgets.add(globalLocal);
         this.addDrawableChild(globalLocal);
@@ -102,8 +97,6 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
         var freeSpace = this.width - offset;
         for (int i = 0; i < BetterChatMod.CATEGORIES.size() - this.BetterChat$tabListPosition; i++) {
             var category = BetterChatMod.CATEGORIES.get(this.BetterChat$tabListPosition + i);
-            if (category == BetterChatMod.ALL_CATEGORY)
-                continue;
             var width = CategoryWidget.getWidth(category);
             if (freeSpace - width <= 1)
                 break;
@@ -127,8 +120,6 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
             tab.setX(offset);
             offset += tab.getWidth() + 1;
         }
-        // Чтобы не слетало - добавляем после перерасчёта
-        this.BetterChat$tabs.add(allCategory);
     }
 
     @Inject(method = "init", at = @At("TAIL"))

@@ -10,7 +10,7 @@ static void main(GroovyAdapter adapter) {
     createSimpleCategory(adapter, parser, "guild", "Гильдия", "Чат поселения", "tc", null, Pattern.compile("^(§.)*\\[(§.)*TC(§.)*]"))
     createSimpleCategory(adapter, parser, "nation", "Альянс", "Чат нации", "nc", null, Pattern.compile("^(§.)*\\[(§.)*NC(§.)*]"))
     // Самой лучшей подруге на свете посвящается <3
-    configBestCategory(adapter, parser)
+//    configBestCategory(adapter, parser) // Секретная категория
 }
 
 static Function<String, Tuple3<String, String, String>> getCWSParser() {

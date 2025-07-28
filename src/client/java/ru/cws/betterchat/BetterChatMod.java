@@ -9,7 +9,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.cws.betterchat.category.AllChatCategory;
 import ru.cws.betterchat.category.ChatCategory;
 import ru.cws.betterchat.category.CommonChatCategory;
 import ru.cws.betterchat.util.ConfigHelper;
@@ -35,7 +34,6 @@ public class BetterChatMod implements ClientModInitializer {
     public static List<ChatCategory> CATEGORIES = new ArrayList<>();
     public static ChatCategory SELECTED_CATEGORY;
     public static CommonChatCategory COMMON_CATEGORY;
-    public static AllChatCategory ALL_CATEGORY;
     public static IChatScreen CHAT_SCREEN = null;
     //
     public static boolean ALL_CHAT_VANILLA = true;
@@ -62,8 +60,6 @@ public class BetterChatMod implements ClientModInitializer {
         });
 
         COMMON_CATEGORY = new CommonChatCategory();
-        ALL_CATEGORY = new AllChatCategory();
-        CATEGORIES.add(ALL_CATEGORY);
         CATEGORIES.add(COMMON_CATEGORY);
 
         if (!new File(SCRIPT_PATH).exists()) {

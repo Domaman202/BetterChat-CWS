@@ -53,31 +53,26 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
                 true
         );
         // Настройки зависимые от категории
-        if (this.category == BetterChatMod.ALL_CATEGORY) {
-            this.addSettingsWidget(new VanillaSettingsWidget());
-        } else {
-            // Настройки зависимые от категории
-            if (this.category == BetterChatMod.COMMON_CATEGORY) {
-                this.addTextField(
-                        BetterChatMod.LOCAL_CHAT_PREFIX,
-                        "Префикс локального чата",
-                        () -> "",
-                        it -> BetterChatMod.LOCAL_CHAT_PREFIX = it,
-                        true
-                );
-                this.addSettingsWidget(new CategoryFormattingSettingsWidget());
-            }
-            // Стрелки
-            var xc = this.getXC();
-            var y = this.getYC() - 53 + this.settingsOffset;
-            var left = MoveLeftWidget.create(xc - 2 - MoveLeftWidget.width(), y, this);
-            this.addDrawableChild(left);
-            this.widgets.add(left);
-            var right = MoveRightWidget.create(xc + 2, y, this);
-            this.addDrawableChild(right);
-            this.widgets.add(right);
-            this.settingsOffset += 21;
+        if (this.category == BetterChatMod.COMMON_CATEGORY) {
+            this.addTextField(
+                    BetterChatMod.LOCAL_CHAT_PREFIX,
+                    "Префикс локального чата",
+                    () -> "",
+                    it -> BetterChatMod.LOCAL_CHAT_PREFIX = it,
+                    true
+            );
+            this.addSettingsWidget(new CategoryFormattingSettingsWidget());
         }
+        // Стрелки
+        var xc = this.getXC();
+        var y = this.getYC() - 53 + this.settingsOffset;
+        var left = MoveLeftWidget.create(xc - 2 - MoveLeftWidget.width(), y, this);
+        this.addDrawableChild(left);
+        this.widgets.add(left);
+        var right = MoveRightWidget.create(xc + 2, y, this);
+        this.addDrawableChild(right);
+        this.widgets.add(right);
+        this.settingsOffset += 21;
     }
 
     protected void addTextField(String initial, String description, Supplier<String> ifEmpty, Consumer<String> changedListener, boolean editable) {

@@ -8,7 +8,7 @@ public class CategoryHelper {
     public static void tryAcceptToAll(Text message) {
         var selectedToNoDefault = false;
         for (ChatCategory category : BetterChatMod.CATEGORIES)
-            if (category.tryAccept(message) && category != BetterChatMod.ALL_CATEGORY)
+            if (category.tryAccept(message))
                selectedToNoDefault = true;
         if (!selectedToNoDefault)
             BetterChatMod.COMMON_CATEGORY.accept(message);

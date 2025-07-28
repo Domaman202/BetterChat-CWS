@@ -41,7 +41,7 @@ public class BetterChatMod implements ClientModInitializer {
     public static boolean FIXED_TAB_SIZE = true;
     public static boolean NO_FLEX = false;
     public static boolean NO_HEAVY_TEXTURES = false;
-    public static boolean NO_THROW = true;
+    public static boolean NO_THROW = false;
     public static boolean AUTOSAVE = true;
 
     @Override
@@ -57,14 +57,10 @@ public class BetterChatMod implements ClientModInitializer {
             }
         });
 
-        if (!new File(CONFIG_FILE).exists()) {
-            COMMON_CATEGORY = new CommonChatCategory();
-            ALL_CATEGORY = new AllChatCategory();
-            CATEGORIES.add(ALL_CATEGORY);
-            CATEGORIES.add(COMMON_CATEGORY);
-            //
-            save();
-        }
+        COMMON_CATEGORY = new CommonChatCategory();
+        ALL_CATEGORY = new AllChatCategory();
+        CATEGORIES.add(ALL_CATEGORY);
+        CATEGORIES.add(COMMON_CATEGORY);
 
         if (!new File(SCRIPT_PATH).exists()) {
             new File(SCRIPT_PATH).mkdirs();
@@ -76,6 +72,10 @@ public class BetterChatMod implements ClientModInitializer {
         }
 
         load();
+
+        if (!new File(CONFIG_FILE).exists()) {
+            save();
+        }
     }
 
     public static void autosave() {
@@ -97,13 +97,6 @@ public class BetterChatMod implements ClientModInitializer {
     }
 
     public static void load() {
-        try {
-            GSON.fromJson(Files.readString(Path.of(CONFIG_FILE)), ConfigHelper.class).toMod();
-        } catch (IOException e) {
-            if (BetterChatMod.NO_THROW)
-                LOGGER.trace("Failed to read config file", e);
-            else throw new RuntimeException(e);
-        }
         try (var loader = new GroovyClassLoader()) {
             for (File file : new File(SCRIPT_PATH).listFiles()) {
                 try {
@@ -117,6 +110,14 @@ public class BetterChatMod implements ClientModInitializer {
         } catch (IOException e) {
             if (BetterChatMod.NO_THROW)
                 LOGGER.trace("Failed to read scripts ", e);
+            else throw new RuntimeException(e);
+        }
+
+        try {
+            GSON.fromJson(Files.readString(Path.of(CONFIG_FILE)), ConfigHelper.class).toMod();
+        } catch (IOException e) {
+            if (BetterChatMod.NO_THROW)
+                LOGGER.trace("Failed to read config file", e);
             else throw new RuntimeException(e);
         }
     }

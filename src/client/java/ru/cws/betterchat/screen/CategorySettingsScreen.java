@@ -25,6 +25,13 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
         super.BetterChat$recalcTabsList();
         // Общие настройки
         this.addTextField(
+                this.category.id,
+                "Идентификатор категории",
+                null,
+                null,
+                false
+        );
+        this.addTextField(
                 this.category.name,
                 "Название категории",
                 this::emptyToText,
@@ -32,7 +39,8 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
                     this.category.name = it;
                     BetterChatMod.autosave();
                     this.BetterChat$recalcTabsList();
-                }
+                },
+                true
         );
         this.addTextField(
                 this.category.description,
@@ -41,16 +49,13 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
                 it -> {
                     this.category.description = it;
                     BetterChatMod.autosave();
-                }
+                },
+                true
         );
         // Настройки зависимые от категории
         if (this.category == BetterChatMod.ALL_CATEGORY) {
             this.addSettingsWidget(new AllChatVanillaSettingsWidget());
         } else {
-            // Настройки зависимые от категории
-            if (this.category != BetterChatMod.COMMON_CATEGORY) {
-                this.addSettingsWidget(new DeleteCategoryWidget(this));
-            }
             // Стрелки
             var xc = this.getXC();
             var y = this.getYC() - 53 + this.settingsOffset;
@@ -64,7 +69,7 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
         }
     }
 
-    protected void addTextField(String initial, String description, Supplier<String> ifEmpty, Consumer<String> changedListener) {
+    protected void addTextField(String initial, String description, Supplier<String> ifEmpty, Consumer<String> changedListener, boolean editable) {
         var field = new CenteredTextFieldWidget(this.textRenderer, this.width / 2, 20, Text.of("Название"));
         field.setFocusUnlocked(true);
         field.setEditableColor(Colors.YELLOW);
@@ -73,8 +78,9 @@ public class CategorySettingsScreen extends AbstractSettingsScreen {
         field.setTooltip(Tooltip.of(Text.of(description)));
         field.setMaxLength(256);
         field.setText(initial == null || initial.isEmpty() ? "[Пусто]" : initial);
-        field.setEditable(true);
-        field.setChangedListener(it -> changedListener.accept(it.isEmpty() ? ifEmpty.get() : it));
+        field.setEditable(editable);
+        if (editable)
+            field.setChangedListener(it -> changedListener.accept(it.isEmpty() ? ifEmpty.get() : it));
         this.addSettingsWidget(field);
     }
 

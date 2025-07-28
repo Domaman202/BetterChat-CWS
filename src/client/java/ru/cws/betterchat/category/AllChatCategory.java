@@ -6,7 +6,7 @@ import ru.cws.betterchat.util.CategoryHelper;
 
 public class AllChatCategory extends ChatCategory {
     public AllChatCategory() {
-        super("Все", "Все чаты");
+        super("all", "Все", "Все чаты");
     }
 
     @Override

@@ -16,8 +16,20 @@ public class GroovyAdapter {
         BetterChatMod.COMMON_CATEGORY.acceptFromOther(other, prefix, sender, content);
     }
 
+    public String getCategoryID(ChatCategory category) {
+        return category.id;
+    }
+
+    public void setCategoryName(ChatCategory category, String name) {
+        category.name = name;
+    }
+
     public String getCategoryName(ChatCategory category) {
         return category.name;
+    }
+
+    public void setCategoryDescription(ChatCategory category, String description) {
+        category.description = description;
     }
 
     public String getCategoryDescription(ChatCategory category) {
@@ -72,17 +84,17 @@ public class GroovyAdapter {
         return BetterChatMod.ALL_CATEGORY;
     }
 
-    public ChatCategory getOrCreateCategory(String name, String description) {
+    public ChatCategory getOrCreateCategory(String id, String name, String description) {
         return BetterChatMod.CATEGORIES.stream().filter(it -> it.name.equals(name)).findFirst().orElseGet(() -> {
-            var category = new GroovyBindChatCategory(name, description);
+            var category = new GroovyBindChatCategory(id, name, description);
             BetterChatMod.CATEGORIES.add(category);
             BetterChatMod.autosave();
             return category;
         });
     }
 
-    public ChatCategory getCategory(String name) {
-        return BetterChatMod.CATEGORIES.stream().filter(it -> it.name.equals(name)).findFirst().orElseThrow(() -> new RuntimeException("No such category: " + name));
+    public ChatCategory getCategory(String id) {
+        return BetterChatMod.CATEGORIES.stream().filter(it -> it.id.equals(id)).findFirst().orElseThrow(() -> new RuntimeException("No such category: " + id));
     }
 
     public String getPlayerName() {

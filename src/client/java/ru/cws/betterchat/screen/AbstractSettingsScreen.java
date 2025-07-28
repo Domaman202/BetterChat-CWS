@@ -15,7 +15,6 @@ import ru.cws.betterchat.category.ChatCategory;
 import ru.cws.betterchat.gui.widget.ListLeftWidget;
 import ru.cws.betterchat.gui.widget.ListRightWidget;
 import ru.cws.betterchat.gui.widget.chat.CategoryWidget;
-import ru.cws.betterchat.gui.widget.settings.AddCategoryWidget;
 import ru.cws.betterchat.gui.widget.settings.CategorySettingsWidget;
 import ru.cws.betterchat.gui.api.ITabListenScreen;
 
@@ -71,10 +70,6 @@ public class AbstractSettingsScreen extends Screen implements ITabListenScreen {
         this.widgets.add(listRight);
         this.addDrawableChild(listRight);
         offset += listRight.getWidth() + 1;
-        var addCategory = new AddCategoryWidget(offset, y, this);
-        this.widgets.add(addCategory);
-        this.addDrawableChild(addCategory);
-        offset += addCategory.getWidth() + 1;
         // -- Добавляем вкладки -- //
         // Добавляем вкладки
         var freeSpace = this.getXE() - offset;

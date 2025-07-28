@@ -6,11 +6,13 @@ import net.minecraft.util.collection.ArrayListDeque;
 import ru.cws.betterchat.gui.api.IChatHud;
 
 public abstract class ChatCategory {
+    public final String id;
     public String name;
     public String description;
     public ArrayListDeque<Text> messages;
 
-    public ChatCategory(String name, String description) {
+    public ChatCategory(String id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.messages = new ArrayListDeque<>(100);

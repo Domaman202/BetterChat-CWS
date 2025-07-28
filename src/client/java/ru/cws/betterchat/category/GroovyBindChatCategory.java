@@ -9,8 +9,8 @@ public class GroovyBindChatCategory extends ChatCategory {
     public Closure<String> formatToSend;
     public Closure<Boolean> tryAccept;
 
-    public GroovyBindChatCategory(String name, String description) {
-        super(name, description);
+    public GroovyBindChatCategory(String id, String name, String description) {
+        super(id, name, description);
     }
 
     @Override

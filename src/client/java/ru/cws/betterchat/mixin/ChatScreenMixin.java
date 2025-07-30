@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -70,7 +71,7 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
             this.BetterChat$widgets.clear();
         } else this.BetterChat$widgets = new ArrayList<>();
         //
-        var offset = 2;
+        var offset = 0;
         var y = this.height - 24;
         var settings = new SettingsWidget(offset, y);
         this.BetterChat$widgets.add(settings);
@@ -93,12 +94,13 @@ public abstract class ChatScreenMixin extends Screen implements IChatScreen, ITa
             BetterChatMod.SELECTED_CATEGORY = BetterChatMod.COMMON_CATEGORY;
         }
         // -- Добавляем вкладки -- //
+        int k = MathHelper.ceil(MathHelper.floor(this.client.options.getChatWidth().getValue() * 280.0 + 40.0) / (float) (double) this.client.options.getChatScale().getValue());
         // Добавляем вкладки
-        var freeSpace = this.width - offset;
+        var freeSpace = k - offset + 14;
         for (int i = 0; i < BetterChatMod.CATEGORIES.size() - this.BetterChat$tabListPosition; i++) {
             var category = BetterChatMod.CATEGORIES.get(this.BetterChat$tabListPosition + i);
             var width = CategoryWidget.getWidth(category);
-            if (freeSpace - width <= 1)
+            if (freeSpace - width <= 0)
                 break;
             var tab = new CategoryWidget(0, y, category);
             this.BetterChat$tabs.add(tab);
